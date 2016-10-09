@@ -1,0 +1,8 @@
+.idea/
+*.pyc
+ninja_490/__pycache__/
+ninja_490/__pycache__/
+db.sqlite3
+ninja_490/migrations/
+ninja/migrations/
+*.log

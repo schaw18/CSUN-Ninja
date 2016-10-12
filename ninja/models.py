@@ -17,3 +17,9 @@ class SectionSchedule(models.Model):
 
     section = models.ForeignKey(Section)
     days = models.CharField(max_length=10)
+
+
+class Instructor(models.Model):
+    
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=35)

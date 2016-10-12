@@ -20,6 +20,5 @@ class SectionSchedule(models.Model):
 
 
 class Instructor(models.Model):
-    
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=35)
+
+    name = models.CharField(max_length=100)

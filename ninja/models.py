@@ -31,14 +31,14 @@ class Course(models.Model):
 
 class Section(models.Model):
 
-    course = models.ForeignKey(Course, related_name="section") # COMP 490
-    section_number = models.CharField(max_length=10, primary_key=True) # 667332
+    course = models.ForeignKey(Course, related_name="section")
+    section_number = models.CharField(max_length=10, primary_key=True)
 
 
 class SectionSchedule(models.Model):
 
-    # one section can have multiple schedules
-    # it's just easier to manage this way
+    section = models.ForeignKey(Section)
+    days = models.CharField(max_length=10)
 
     section = models.ForeignKey(Section) # <Section object>
     days = models.CharField(max_length=10) # "MTWHFS"
@@ -46,3 +46,8 @@ class SectionSchedule(models.Model):
     time_end = models.TimeField(blank=True)
     date_start = models.DateField(blank=True)
     date_end = models.DateField(blank=True)
+
+class Instructor(models.Model):
+
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=35)

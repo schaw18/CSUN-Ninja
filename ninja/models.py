@@ -47,7 +47,8 @@ class SectionSchedule(models.Model):
     date_start = models.DateField(blank=True)
     date_end = models.DateField(blank=True)
 
+
 class Instructor(models.Model):
 
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=35)
+    name = models.CharField(max_length=100)
+

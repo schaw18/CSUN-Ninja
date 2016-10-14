@@ -49,6 +49,7 @@ class SectionSchedule(models.Model):
 
 
 class Instructor(models.Model):
-
+	##Test Comment from Scott
+	##
     name = models.CharField(max_length=100)
 

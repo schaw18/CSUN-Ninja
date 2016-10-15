@@ -49,7 +49,7 @@ class SectionSchedule(models.Model):
 
 
 class Instructor(models.Model):
-	##Test Comment from Scott
-	##
+	# Instructor model is referenced by the Section Details model
+	
     name = models.CharField(max_length=100)
 

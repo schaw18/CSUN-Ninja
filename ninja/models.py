@@ -53,3 +53,10 @@ class Instructor(models.Model):
 	##
     name = models.CharField(max_length=100)
 
+
+class Subject(models.Model):
+	# Subject model holds the subject name and description
+	# which is referenced in the courses model
+	
+    name = models.CharField(max_length=75)
+    description = models.TextField()

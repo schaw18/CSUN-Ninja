@@ -49,8 +49,8 @@ class SectionSchedule(models.Model):
 
 
 class Instructor(models.Model):
-	##Test Comment from Scott
-	##
+	# Instructor model is referenced by the Section Details model
+	
     name = models.CharField(max_length=100)
 
 
@@ -62,3 +62,9 @@ class Prerequisites(models.Model):
     main_course = models.ForeignKey(Course)
     prereqeuisite_course = models.ForeignKey(Course)
 
+class Subject(models.Model):
+	# Subject model holds the subject name and description
+	# which is referenced in the courses model
+	
+    name = models.CharField(max_length=75)
+    description = models.TextField()

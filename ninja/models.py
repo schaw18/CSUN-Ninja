@@ -53,3 +53,12 @@ class Instructor(models.Model):
 	##
     name = models.CharField(max_length=100)
 
+
+class Prerequisites(models.Model):
+    # Prerequisite model is connected to the courses table
+    # consists of two fields for verifying if a specific course
+    # meets all prerequisites required before taking the class
+
+    main_course = models.ForeignKey(Course)
+    prereqeuisite_course = models.ForeignKey(Course)
+

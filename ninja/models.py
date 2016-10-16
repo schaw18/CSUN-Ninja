@@ -60,7 +60,7 @@ class Prerequisites(models.Model):
     # meets all prerequisites required before taking the class
 
     main_course = models.ForeignKey('Course')
-    prerequisite_course = models.ForeignKey('Course')
+    prerequisite_course = models.ForeignKey('Course', related_name='prereq')
 
 	
     class Meta:

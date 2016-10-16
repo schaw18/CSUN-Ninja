@@ -60,7 +60,8 @@ class Prerequisites(models.Model):
     # meets all prerequisites required before taking the class
 
     main_course = models.ForeignKey(Course)
-    prereqeuisite_course = models.ForeignKey(Course)
+    prerequisite_course = models.ForeignKey(Course)
+	
 
 class Subject(models.Model):
 	# Subject model holds the subject name and description

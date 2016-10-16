@@ -61,9 +61,10 @@ class Prerequisites(models.Model):
 
     main_course = models.ForeignKey('Course')
     prerequisite_course = models.ForeignKey('Course')
+
 	
-	class meta:
-	unique_together = ('main_course', 'prerequisite_course')
+    class Meta:
+	    unique_together = ('main_course', 'prerequisite_course')
 	
 
 class Subject(models.Model):

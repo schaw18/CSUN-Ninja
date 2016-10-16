@@ -59,8 +59,11 @@ class Prerequisites(models.Model):
     # consists of two fields for verifying if a specific course
     # meets all prerequisites required before taking the class
 
-    main_course = models.ForeignKey(Course)
-    prerequisite_course = models.ForeignKey(Course)
+    main_course = models.ForeignKey('Course')
+    prerequisite_course = models.ForeignKey('Course')
+	
+	class meta:
+	unique_together = ('main_course', 'prerequisite_course')
 	
 
 class Subject(models.Model):

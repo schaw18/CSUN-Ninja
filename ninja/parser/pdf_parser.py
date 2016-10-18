@@ -4,6 +4,10 @@ from ..models import Course, Section, SectionSchedule
 from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
 import datetime
+import urllib.request
+
+
+
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -189,7 +193,7 @@ def main():
         for line in list_of_lines:
             mo = pattern.search(line)
             if mo:
-                print(mo)
+                print(mo.group(0))
                 model_population(mo)
             else:
                 logging.debug('FAILED to find PATTERN in the\n%s' % line)
@@ -326,12 +330,19 @@ def main():
 
 
     def launch():
+        logging.debug('START File DOWNLOAD')
+
+        # Download the file from `URL_OF_SCHEDULE_PDF` and save it locally under `FILE_SAVE_PATH`:
+        FILE_SAVE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'OpenClasses.pdf')
+        URL_OF_SCHEDULE_PDF = 'http://www.csun.edu/OpenClasses'
+        urllib.request.urlretrieve(URL_OF_SCHEDULE_PDF, FILE_SAVE_PATH)
+
+
         logging.debug('START File Parsing')
         # What pages of the source PDF file to pass
         FIRST_PAGE = None
         LAST_PAGE = None  # if both are None - then the whole document will be parsed
 
-        # list of service words, we dont want lines containing these words
 
 
         # This is a path to the source PDF file

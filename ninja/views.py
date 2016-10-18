@@ -9,5 +9,4 @@ def ShowAll(request):
     just_a_variable = Course.objects.all()
 
     context = {"just_a_variable" : just_a_variable}
-    print (render(request, "ninja/course_list.html", context).content)
     return render(request, "ninja/course_list.html", context)

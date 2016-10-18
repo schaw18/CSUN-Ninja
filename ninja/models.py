@@ -20,32 +20,35 @@ class Course(models.Model):
     # not really informative, so we will enforce uniqueness in two fields
     # this is questionable approach however
 
-    subject = models.CharField(max_length=20)
-    course_level = models.CharField(max_length=10)
-    units = models.FloatField()
+    course_subject = models.CharField(max_length=20)  # COMP
+    course_level = models.CharField(max_length=10)  # 101/L
+    course_title = models.CharField(max_length=200)  # Computer literacy and such
+    course_type = models.CharField(max_length=20)  # Lecture
+    course_units = models.FloatField()
 
 
     class Meta:
-        unique_together =('subject', 'course_level')
+        unique_together =('course_subject', 'course_level')
 
 
 class Section(models.Model):
 
-    course = models.ForeignKey(Course, related_name="section")
-    section_number = models.CharField(max_length=10, primary_key=True)
+    course = models.ForeignKey(Course, related_name="section") # <Course object>
+    class_number = models.CharField(max_length=10, primary_key=True) # 543563
+    section_number = models.CharField(max_length=10) # 1 or 2 or 3
 
 
 class SectionSchedule(models.Model):
 
-    section = models.ForeignKey(Section)
     days = models.CharField(max_length=10)
-
     section = models.ForeignKey(Section) # <Section object>
+    room = models.CharField(max_length=20, blank=True)
+    instructor = models.CharField(max_length=20)
     days = models.CharField(max_length=10) # "MTWHFS"
-    time_start = models.TimeField(blank=True)
-    time_end = models.TimeField(blank=True)
-    date_start = models.DateField(blank=True)
-    date_end = models.DateField(blank=True)
+    time_start = models.TimeField(blank=True, null=True)
+    time_end = models.TimeField(blank=True, null=True)
+    date_start = models.DateField(blank=True, null=True)
+    date_end = models.DateField(blank=True, null=True)
 
 
 class Instructor(models.Model):

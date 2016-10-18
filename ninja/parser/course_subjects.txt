@@ -1,0 +1,84 @@
+#Jolly COMMENTS
+#Important is to put each Subject to a new line
+#you can use commas, or quotations if you like
+#they will be disregarded
+#empty lines are NOT OK
+A M
+'AAS',
+'ACCT',
+'AFRS',
+'ANTH',
+'ART',
+'ARMN',
+'ASTR',
+'AIS',
+'BIOL'
+'BLAW'
+'BUS'
+'C E'
+'CADV'
+'CAS'
+'CD'
+'CH S'
+'CHEM'
+'CHIN'
+'CIT'
+'CLAS'
+'CM'
+'COMP'
+'COMS'
+'CTVA'
+'DEAF'
+'E ED'
+'ECE',
+'ECON'
+'ELPS'
+'ENGL'
+EOH
+EPC
+FCS
+FIN
+FLIT
+FREN
+GEOG
+GEOL
+GWS
+HEBR
+HIST
+HSCI
+HUM
+IS
+ITAL
+J S
+JAPN
+JOUR
+KIN
+LING
+LR S
+M E
+MATH
+MGT
+MKT
+MSE
+MUS
+PHIL
+PHYS
+POLS
+S ED
+PSY
+QS
+R S
+RTM
+RUSS
+SOC
+SOM
+SPAN
+SPED
+SUST
+TH
+UNIV
+URBS
+SWRK
+ECE
+ELPS
+PHSC

@@ -37,6 +37,8 @@ class Section(models.Model):
     class_number = models.CharField(max_length=10, primary_key=True) # 543563
     section_number = models.CharField(max_length=10) # 1 or 2 or 3
 
+    def __str__(self):
+        return self.class_number
 
 class SectionSchedule(models.Model):
 

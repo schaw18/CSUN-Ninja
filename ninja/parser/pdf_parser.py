@@ -72,6 +72,7 @@ def main():
             IMPORTANT: this assumption is actually incorrect, so we need a helper function
             to glue some (mistakenly cut) lines back
             """
+
         for subject in set_of_subjects:
             text_source = text_source.replace(subject, '\n' + subject)
             # print(subject)
@@ -100,12 +101,12 @@ def main():
     def load_subjects(filename):
         """takes a txt file of course subjects, cleans a bit
         and return a set of course subjects"""
-        set_of_subjects = set()
+        set_of_subjects = []
         with open(filename, 'r') as f:
             if f:
                 for line in f:
                     if not line.startswith('#'):
-                        set_of_subjects.add(line.strip('\"\',\n ') + '  ')
+                        set_of_subjects.append(line.strip('\"\',\n ') + '  ')
             else:
                 logging.ERROR('ERROR: couldn\'t open Subject txt File')
         return set_of_subjects
@@ -270,18 +271,17 @@ def main():
                 # section_max_enrollment=max_enrollment,
                 # section_current_enrollment=current_enrolment,
             )
-
             section.save()
 
         except IntegrityError:
-            logging.warning('FAILED to CREATE/UPDATE Section %s-' %(class_number, section_number))
+            logging.warning('FAILED to CREATE/UPDATE Section %s' %(class_number))
 
         # add a Schedule to a given section
-        # TODO: has a bug! if shedue changes -> adds a new schedule but doesnt delete old one
+        # TODO: has a bug! if schedule changes -> adds a new schedule but doesnt delete old one
         try:
             # print("Trying to add Section Schedule")
 
-            section = Section.objects.get(class_number=class_number, section_number=section_number)
+            section = Section.objects.get(class_number=class_number)
             section_schedule, created = \
                 SectionSchedule.objects.update_or_create(
                     section=section,
@@ -294,6 +294,8 @@ def main():
                     instructor=instructor,
                 )
             section_schedule.save()
+
+
         except IntegrityError:
             logging.warning("FAILED to CREATE/UPDATE Section Schedule%s-%s-%s"(class_number, section_number, days))
             # logging.debug("time %s-%s date %s %s" %(time_start, time_end, date_start, date_end))
@@ -342,6 +344,12 @@ def main():
         urllib.request.urlretrieve(URL_OF_SCHEDULE_PDF, FILE_SAVE_PATH)
         timestamp = int(time.time())
 
+        # waits until the file appears
+        # for debug puproses only, probably wont be needed
+        if not os.path.isfile(FILE_SAVE_PATH):
+            print('WAITING FOR THE FILE TO DOWNLOAD')
+            time.sleep(1)
+
         logging.debug('UPLOADING to S3')
         timestamped_filename = "{}_openclasses.pdf".format(str(timestamp))
         s3 = boto3.resource('s3')
@@ -368,8 +376,8 @@ def main():
 
         logging.debug('START File Parsing')
         # What pages of the source PDF file to pass
-        FIRST_PAGE = 4
-        LAST_PAGE = 5  # if both are None - then the whole document will be parsed
+        FIRST_PAGE = 1
+        LAST_PAGE = 5 # if both are None - then the whole document will be parsed
 
         # get a set of all course abbreviations(from a file)
         set_of_course_subjects = load_subjects(SUBJECTS_FILE)

@@ -40,8 +40,8 @@ class Section(models.Model):
 
 class SectionSchedule(models.Model):
 
-    days = models.CharField(max_length=10)
-    section = models.ForeignKey(Section) # <Section object>
+
+    section = models.ForeignKey(Section, related_name="section_schedule") # <Section object>
     room = models.CharField(max_length=20, blank=True)
     instructor = models.CharField(max_length=20)
     days = models.CharField(max_length=10) # "MTWHFS"

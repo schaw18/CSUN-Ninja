@@ -147,3 +147,8 @@ class FAQ(models.Model):
 
     def __init__(self):
         return self.question
+
+
+# class UserFilters(models.Model):
+#     user = models.OneToOneField(User)
+#

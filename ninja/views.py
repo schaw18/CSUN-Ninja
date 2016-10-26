@@ -10,3 +10,12 @@ def ShowAll(request):
 
     context = {"just_a_variable" : just_a_variable}
     return render(request, "ninja/course_list.html", context)
+
+
+def showSections(request):
+
+    comp_courses = Course.objects.filter(course_subject='COMP')
+
+    comp_sections = Section.objects.filter(course__course_subject='COMP')
+
+    return render(request, "ninja/forms.html", {"comp_sections" : comp_sections})

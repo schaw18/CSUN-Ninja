@@ -8,12 +8,12 @@
 
 {% for v in just_a_variable %}
 
-    {{ v.course_subject }} {{ v.course_level }}, {{ v.course_title }}, {{ v.course_type }} Units: {{v.course_units}}<br>
+    {{ v.course_subject }} {{ v.course_level }}, {{ v.course_title }}, {{ v.course_type }} <b>Units:</b> {{v.course_units}}<br>
     <ul>
     {% for section in v.section.all %}
      <li>{{ section.class_number }}
         {% for schedule in section.section_schedule.all %}
-        {{ schedule.days }} {{ schedule.room }}
+        <b>Days:</b> {{ schedule.days }} <b>Room:</b>{{ schedule.room }} <b>Instructor:</b> {{ schedule.instructor }}
 
         {% endfor %}
 

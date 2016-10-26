@@ -376,8 +376,8 @@ def main():
 
         logging.debug('START File Parsing')
         # What pages of the source PDF file to pass
-        FIRST_PAGE = 1
-        LAST_PAGE = 5 # if both are None - then the whole document will be parsed
+        FIRST_PAGE = None
+        LAST_PAGE = None # if both are None - then the whole document will be parsed
 
         # get a set of all course abbreviations(from a file)
         set_of_course_subjects = load_subjects(SUBJECTS_FILE)

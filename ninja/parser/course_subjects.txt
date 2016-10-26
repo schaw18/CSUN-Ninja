@@ -1,5 +1,5 @@
 #Jolly COMMENTS
-#Important is to put each Subject to a new line
+#Important:  put each Subject into a new line
 #you can use commas, or quotations if you like
 #they will be disregarded
 #empty lines are NOT OK

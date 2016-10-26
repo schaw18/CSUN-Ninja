@@ -1,19 +1,16 @@
 import PyPDF2
-import re, os, string, logging
-from ..models import Course, Section, SectionSchedule
-from django.db.utils import IntegrityError
-from django.core.exceptions import ValidationError
+import re, os, logging
+import boto3
+import time
 import datetime
 import urllib.request
 
-
-
+from ..models import Course, Section, SectionSchedule
+from django.db.utils import IntegrityError
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     )
-
-
 def main():
 
     def print_a_list(source_list):
@@ -75,6 +72,7 @@ def main():
             IMPORTANT: this assumption is actually incorrect, so we need a helper function
             to glue some (mistakenly cut) lines back
             """
+
         for subject in set_of_subjects:
             text_source = text_source.replace(subject, '\n' + subject)
             # print(subject)
@@ -103,12 +101,12 @@ def main():
     def load_subjects(filename):
         """takes a txt file of course subjects, cleans a bit
         and return a set of course subjects"""
-        set_of_subjects = set()
+        set_of_subjects = []
         with open(filename, 'r') as f:
             if f:
                 for line in f:
                     if not line.startswith('#'):
-                        set_of_subjects.add(line.strip('\"\',\n ') + '  ')
+                        set_of_subjects.append(line.strip('\"\',\n ') + '  ')
             else:
                 logging.ERROR('ERROR: couldn\'t open Subject txt File')
         return set_of_subjects
@@ -273,18 +271,17 @@ def main():
                 # section_max_enrollment=max_enrollment,
                 # section_current_enrollment=current_enrolment,
             )
-
             section.save()
 
         except IntegrityError:
-            logging.warning('FAILED to CREATE/UPDATE Section %s-' %(class_number, section_number))
+            logging.warning('FAILED to CREATE/UPDATE Section %s' %(class_number))
 
         # add a Schedule to a given section
-        # TODO: has a bug! if shedue changes -> adds a new schedule but doesnt delete old one
+        # TODO: has a bug! if schedule changes -> adds a new schedule but doesnt delete old one
         try:
             # print("Trying to add Section Schedule")
 
-            section = Section.objects.get(class_number=class_number, section_number=section_number)
+            section = Section.objects.get(class_number=class_number)
             section_schedule, created = \
                 SectionSchedule.objects.update_or_create(
                     section=section,
@@ -297,6 +294,8 @@ def main():
                     instructor=instructor,
                 )
             section_schedule.save()
+
+
         except IntegrityError:
             logging.warning("FAILED to CREATE/UPDATE Section Schedule%s-%s-%s"(class_number, section_number, days))
             # logging.debug("time %s-%s date %s %s" %(time_start, time_end, date_start, date_end))
@@ -328,29 +327,57 @@ def main():
             logging.debug('Something wrong with TIME parsing')
         return time_start, time_end
 
+    def schedule_download_and_archive(FILE_SAVE_PATH):
+        """downloads a pdf of schedule and saves it locally,
+        if a local file already exists - deletes it,
+        then timesmaps it with UNIX time and
+        stores in in S3"""
+
+
+        URL_OF_SCHEDULE_PDF = 'http://www.csun.edu/OpenClasses'
+
+        # if a local copy exists - delete it
+        if os.path.isfile(FILE_SAVE_PATH):
+            os.unlink(FILE_SAVE_PATH)
+
+        logging.debug('START File DOWNLOAD')
+        urllib.request.urlretrieve(URL_OF_SCHEDULE_PDF, FILE_SAVE_PATH)
+        timestamp = int(time.time())
+
+        # waits until the file appears
+        # for debug puproses only, probably wont be needed
+        if not os.path.isfile(FILE_SAVE_PATH):
+            print('WAITING FOR THE FILE TO DOWNLOAD')
+            time.sleep(1)
+
+        logging.debug('UPLOADING to S3')
+        timestamped_filename = "{}_openclasses.pdf".format(str(timestamp))
+        s3 = boto3.resource('s3')
+        s3.Object('csunninja', timestamped_filename).put(Body=open(FILE_SAVE_PATH, 'rb'))
+        return
+
+
 
     def launch():
-        logging.debug('START File DOWNLOAD')
+
 
         # Download the file from `URL_OF_SCHEDULE_PDF` and save it locally under `FILE_SAVE_PATH`:
         FILE_SAVE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'OpenClasses.pdf')
-        URL_OF_SCHEDULE_PDF = 'http://www.csun.edu/OpenClasses'
-        urllib.request.urlretrieve(URL_OF_SCHEDULE_PDF, FILE_SAVE_PATH)
 
+        # This is a path to the source PDF file
+        PDF_FILE_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'OpenClasses.pdf')
+
+        # This is a path to the txt file containing all subject abbreviations
+        SUBJECTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'course_subjects.txt')
+
+        # download a fresh version of a schedule, save it locally
+        # then timestamp it and send to S3 bucket
+        schedule_download_and_archive(FILE_SAVE_PATH)
 
         logging.debug('START File Parsing')
         # What pages of the source PDF file to pass
         FIRST_PAGE = None
-        LAST_PAGE = None  # if both are None - then the whole document will be parsed
-
-
-
-        # This is a path to the source PDF file
-        PDF_FILE_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'OpenClasses.pdf')
-        # PDF_FILE_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'openclasses-4-16-2016.pdf')
-        # This is a path to the txt file containing all subject abbreviations
-        SUBJECTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'course_subjects.txt')
-
+        LAST_PAGE = None # if both are None - then the whole document will be parsed
 
         # get a set of all course abbreviations(from a file)
         set_of_course_subjects = load_subjects(SUBJECTS_FILE)

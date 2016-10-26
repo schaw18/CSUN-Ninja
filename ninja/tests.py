@@ -23,4 +23,4 @@ class ListOfCourses(TestCase):
     def test_count_couses(self):
 
         request = self.factory.get('/', {})
-        print(ShowAll(request))
+        print(showAll(request))

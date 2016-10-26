@@ -78,3 +78,12 @@ class Subject(models.Model):
 	
     name = models.CharField(max_length=75)
     description = models.TextField()
+
+    
+class Corequisites(models.Model):
+    # Corequisites model is connected to the courses table
+    # consists of two fields for verifying if a specific course
+    # meets all corequisites required before taking the class
+
+    main_course = models.ForeignKey('Course')
+    corequisite_course = models.ForeignKey('Course', related_name='coreq')

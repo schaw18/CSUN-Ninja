@@ -4,6 +4,7 @@ import os, logging
 def main():
 
     # Valera's pdf_to_txt method
+    # This is a test from Scott
     def pdf_to_txt(filename, FIRST_PAGE, LAST_PAGE):
         """
         :param filename:

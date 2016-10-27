@@ -38,7 +38,6 @@ class Student(models.Model):
         pass
 
 
-
 class Course(models.Model):
     # id field will be created automatically, but it
     #   not really informative, so we will enforce uniqueness in two fields
@@ -75,8 +74,8 @@ class SectionSchedule(models.Model):
 
     section = models.ForeignKey(Section, related_name="section_schedule")  # <Section object>
     room = models.CharField(max_length=20, blank=True)
-    instructor = models.CharField(max_length=20)        # just a name as a string, no specifics
-    days = models.CharField(max_length=10)              # "MTWHFS"
+    instructor = models.CharField(max_length=20)  # just a name as a string, no specifics
+    days = models.CharField(max_length=10)  # "MTWHFS"
     time_start = models.TimeField(blank=True, null=True)
     time_end = models.TimeField(blank=True, null=True)
     date_start = models.DateField(blank=True, null=True)
@@ -121,13 +120,18 @@ class CoursesTaken(models.Model):
     user = models.ForeignKey(User)
     course_taken = models.ForeignKey(Course)
 
+    def __str__(self):
+        return "{} {}-{}".format(self.user.username,
+                                 self.course_taken.course_subject,
+                                 self.course_taken.course_level)
+
 
 class SectionShortList(models.Model):
     # a relation, if exists  -> this user
     #   have chosen the section for further consideration
     #   Should reflect current availability of the section
     user = models.ForeignKey(User)
-    section =  models.ForeignKey(Section)
+    section = models.ForeignKey(Section)
 
 
 class SectionStagedForRegistry(models.Model):
@@ -135,7 +139,34 @@ class SectionStagedForRegistry(models.Model):
     #   have chosen the section for registration
     #   Should reflect current availability of the section
     user = models.ForeignKey(User)
-    section =  models.ForeignKey(Section)
+    section = models.ForeignKey(Section)
+
+
+class Major(models.Model):
+    # ex. COMP, Computer science and techno.....
+    abbreviation = models.CharField(max_length=10, primary_key=True)
+    description = models.TextField()
+
+class MajorCourse(models.Model):
+    # if a relation exists -> the course is strictly necessary towards
+    #     the given major. It will not include general requirements.
+    #     Probaly only courses itemized on a Major Diagram
+    course = models.ForeignKey(Course)
+    major =  models.ForeignKey(Major)
+
+class UserMajor(models.Model):
+    # if relation exists -> the user indicated the major
+    #   a user may have multiple majors
+    user = models.ForeignKey(User)
+    major = models.ForeignKey(Major)
+
+
+class InterchangeableCourses(models.Model):
+    # if a triple exists than two courses can be interchanged
+    #   within the given major
+    course_1 = models.ForeignKey(Course, related_name="course_1")
+    course_2 = models.ForeignKey(Course, related_name="course_2")
+    major = models.ForeignKey(Major)
 
 
 class FAQ(models.Model):
@@ -145,10 +176,35 @@ class FAQ(models.Model):
     question = models.CharField(max_length=200, primary_key=True)
     answer = models.CharField(max_length=500)
 
-    def __init__(self):
+    def __str__(self):
         return self.question
 
 
-# class UserFilters(models.Model):
-#     user = models.OneToOneField(User)
-#
+class UserFilters(models.Model):
+    user = models.OneToOneField(User)
+
+    available_monday = models.BooleanField(default=True)
+    available_tuesday = models.BooleanField(default=True)
+    available_wednesday = models.BooleanField(default=True)
+    available_thursday = models.BooleanField(default=True)
+    available_friday = models.BooleanField(default=True)
+    available_saturday = models.BooleanField(default=True)
+
+
+
+    def days_list(self):
+        # TODO: redundant, need converter M -> Monday
+        days = []
+        if self.available_monday:
+            days.append("Monday")
+        if self.available_tuesday:
+            days.append("Tuesday")
+        if self.available_wednesday:
+            days.append("Wednesday")
+        if self.available_thursday:
+            days.append("Thursday")
+        if self.available_friday:
+            days.append("Friday")
+        if self.available_saturday:
+            days.append("Saturday")
+        return days

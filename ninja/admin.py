@@ -3,5 +3,6 @@ from .models import *
 
 admin.site.register(Section)
 admin.site.register(Course)
+admin.site.register(CoursesTaken)
 admin.site.register(FAQ)
 

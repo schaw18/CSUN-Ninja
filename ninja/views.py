@@ -94,12 +94,13 @@ def index(request):
     #     shows a  simple list of all courses
     #     in the database
     all_courses = Course.objects.all()
-
-    if request.user:
+    context ={}
+    if request.user.is_authenticated:
+        print(request.user)
         filter, created =  UserFilters.objects.get_or_create(user=request.user)
         days_list = filter.days_list()
 
-    context = {"all_courses" : all_courses,
+        context = {"all_courses" : all_courses,
                "days_list": days_list}
     return render(request, "ninja/index.html", context)
 

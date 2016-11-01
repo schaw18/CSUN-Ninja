@@ -1,0 +1,8 @@
+PyPDF2
+    for pdf parsing
+urllib.request
+    for retrieving pdf file
+boto3
+    S3 communication
+time
+    timestamping

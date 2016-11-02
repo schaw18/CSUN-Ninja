@@ -208,3 +208,7 @@ class UserFilters(models.Model):
         if self.available_saturday:
             days.append("Saturday")
         return days
+
+class DRPfile(models.Model):
+    user = models.OneToOneField(User)
+    file = models.FileField(upload_to='dprs/')

@@ -16,3 +16,9 @@ class FilterForm(forms.ModelForm):
     class Meta:
         model = UserFilters
         exclude =['user']
+
+class DPRUploadForm(forms.Form):
+    docfile = forms.FileField(
+        label='Select you DPR file',
+        help_text='but don\'t tell anyone'
+    )

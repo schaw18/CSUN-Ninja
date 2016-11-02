@@ -1,7 +1,10 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib import messages
+from django.urls import reverse
+
 from .forms import LoginForm, SignUpForm, FilterForm, DPRUploadForm
 from .models import *
 
@@ -139,16 +142,17 @@ def showSections(request):
 
 
 
-def list(request):
+def upload(request):
     # Handle file upload
     if request.method == 'POST':
         form = DPRUploadForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = DRPfile(docfile = request.FILES['docfile'])
+            user=request.user
             newdoc.save()
 
             # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('myapp.views.list'))
+            return HttpResponseRedirect(reverse('upload'))
     else:
         form = DPRUploadForm() # A empty, unbound form
 
@@ -156,8 +160,4 @@ def list(request):
     documents = DRPfile.objects.all()
 
     # Render list page with the documents and the form
-    return render_to_response(
-        'myapp/list.html',
-        {'documents': documents, 'form': form},
-        context_instance=RequestContext(request)
-    )
+    return render(request, "ninja/upload.html", {'documents': documents, 'form': form} )

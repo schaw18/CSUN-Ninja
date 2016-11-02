@@ -210,5 +210,5 @@ class UserFilters(models.Model):
         return days
 
 class DRPfile(models.Model):
-    user = models.OneToOneField(User)
-    file = models.FileField(upload_to='dprs/')
+    # user = models.OneToOneField(User)
+    docfile = models.FileField(upload_to='dprs/')

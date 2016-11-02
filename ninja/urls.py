@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^filters/', views.filters, name='filters'),
     url(r'^flush_db/', views.flush_db, name='flush_db'),
     url(r'^update_classes/', views.update_classes, name='update_classes'),
+    url(r'^upload', views.upload, name='upload'),
 
 ]

@@ -1,8 +1,11 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib import messages
-from .forms import LoginForm, SignUpForm, FilterForm
+from django.urls import reverse
+
+from .forms import LoginForm, SignUpForm, FilterForm, DPRUploadForm
 from .models import *
 
 # local exports
@@ -136,3 +139,25 @@ def showSections(request):
     comp_sections = Section.objects.filter(course__course_subject='COMP')
 
     return render(request, "ninja/index.html", {"comp_sections" : comp_sections})
+
+
+
+def upload(request):
+    # Handle file upload
+    if request.method == 'POST':
+        form = DPRUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            newdoc = DRPfile(docfile = request.FILES['docfile'])
+            user=request.user
+            newdoc.save()
+
+            # Redirect to the document list after POST
+            return HttpResponseRedirect(reverse('upload'))
+    else:
+        form = DPRUploadForm() # A empty, unbound form
+
+    # Load documents for the list page
+    documents = DRPfile.objects.all()
+
+    # Render list page with the documents and the form
+    return render(request, "ninja/upload.html", {'documents': documents, 'form': form} )

@@ -48,7 +48,12 @@ def main():
 
         ge_pattern = re.compile(r'(?:GE(?:[A-Z]| | &)*:)(?:.|\n)*(?:GE(?:[A-Z]| | &)*:)')
 
-        print(re.findall(ge_pattern, dpr_text))
+        results = re.findall(ge_pattern, dpr_text)
+
+        for result in results:
+            print(result)
+
+        #print(re.findall(ge_pattern, dpr_text))
 
 #==============================================================================#
     logging.debug('START File Parsing')

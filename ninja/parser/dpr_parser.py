@@ -34,26 +34,22 @@ def main():
         return str
 
     def pattern_search(dpr_text):
-        #course_pattern = re.compile(r'(?:\n| +)([A-Z]{2,4}|[A-Z]{1,2} [A-Z])(?: +)(\d{3}(?:[A-Z]| )?(?:,|\n|,\n))+')
-        #course_pattern = re.compile(r'''
-        #(?:\n| +)           # New line or spaces precede course name
-        #([A-Z]{2,4}         # Course name can be 2-4 letters
-        #|[A-Z]{1,2} [A-Z])  # or 1-2 letters followed by 1 letter
-        #(?: +)              # Course name followed by at least 1 space
-        #\d{3}              # Course number must be 3 digits
-        #?:[A-Z]| )?        # Followed by an optional letter or space
-        #?:,|\n|,\n)        # but must end with , or new line or both
-        #)+                  # and can repeat more than once
-        #''', re.VERBOSE)
-
-        ge_pattern = re.compile(r'(?:GE(?:[A-Z]| | &)*:)(?:.|\n)*(?:GE(?:[A-Z]| | &)*:)')
+        ge_pattern = re.compile(r'GE.*:(?:\s+(?:[A-Z]{2,4}|[A-Z]{1,2} [A-Z]) +(?:\d{3}(?:[A-Z]{1,2})?(?:,|\n)?)+)+')
 
         results = re.findall(ge_pattern, dpr_text)
-
         for result in results:
             print(result)
 
-        #print(re.findall(ge_pattern, dpr_text))
+    def clean_dpr(dpr_text):
+        page_pattern = re.compile(r'\nPage\s\d{1,}\sof\s\d{1,}\n+\x0c')
+        for page_line in re.findall(page_pattern, dpr_text):
+            dpr_text = dpr_text.replace(page_line, '')
+
+        dpr_text = dpr_text.replace('  ,', ',')
+        dpr_text = dpr_text.replace(' ,', ',')
+        dpr_text = dpr_text.replace(',\n', '\n')
+
+        return dpr_text
 
 #==============================================================================#
     logging.debug('START File Parsing')
@@ -64,14 +60,16 @@ def main():
     # get a raw text from the pdf
     text_source = pdf_to_txt(DPR_FILE_NAME)
 
+    # clean up and filter dpr text
+    text_source = clean_dpr(text_source)
+
     # begin pattern matching
     pattern_search(text_source)
 
     # output to file (for debugging purposes)
-    #output_text = open('dpr_output.txt', 'w')
-    #output_text.write(text_source)
-    #output_text.close()
-
+    output_text = open('dpr_output.txt', 'w')
+    output_text.write(text_source)
+    output_text.close()
 
 if __name__ == '__main__':
     main()

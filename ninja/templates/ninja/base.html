@@ -26,6 +26,7 @@
         {% if user.is_authenticated %}
         {% endif %}
             <li><a href="{% url 'filters' %}">Filters</a></li>
+            <li><a href="{% url 'load_mock_major_data' %}">Mock DPR</a></li>
             <li><a href="{% url 'flush_db' %}">Flush DB</a></li>
             <li><a href="{% url 'update_classes' %}">Parse Classes</a></li>
             <li><a href="{% url 'upload' %}">Upload DPR</a></li>

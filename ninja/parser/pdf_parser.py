@@ -1,11 +1,11 @@
 import PyPDF2
 import re, os, logging
-import boto3
 import time
 import datetime
 import urllib.request
 
 from ..models import Course, Section, SectionSchedule
+from ..models import LastPDFUpdate
 from django.db.utils import IntegrityError
 
 logging.basicConfig(level=logging.DEBUG,
@@ -162,6 +162,11 @@ def main():
 
         return list_of_classes
 
+    def get_time_of_publication(text):
+        pattern = re.compile(r'Printed:\n(\d\d/\d\d/\d\d\d\d) (\d\d:\d\d:\d\d)')
+        times = pattern.search(text)
+        return times.group(1), times.group(2)
+
     def pattern_search(list_of_lines):
         """ goes througth all lines one by one and tries to match
          predefined a pattern. If there is a match - > send this line
@@ -185,13 +190,13 @@ def main():
                              r'(?P<date_end>[0-9/]+)\s+'
                              r'Time:\s+(?P<time>[0-9AMP :-]+)\s'
                              r'Days:\s+(?P<days>[A-Za-z]+)\s+'
-                             r'Room:\s+(?P<room>[A-Za-z0-9@\- ]+)\s+'
+                             r'Room:\s+(?P<room>[A-Za-z0-9@&\- ]+)\s+'
                              r'Instructor:\s+(?P<instructor>[A-Za-z, ]+)')
 
         for line in list_of_lines:
             mo = pattern.search(line)
             if mo:
-                print(mo.group(0))
+                # print(mo.group(0))
                 model_population(mo)
             else:
                 logging.debug('FAILED to find PATTERN in the\n%s' % line)
@@ -268,8 +273,8 @@ def main():
                 class_number=class_number,
                 section_number=section_number,
                 # for the future
-                # section_max_enrollment=max_enrollment,
-                # section_current_enrollment=current_enrolment,
+                section_max_enrollment=max_enrollment,
+                section_current_enrollment=current_enrolment,
             )
             section.save()
 
@@ -330,8 +335,7 @@ def main():
     def schedule_download_and_archive(FILE_SAVE_PATH):
         """downloads a pdf of schedule and saves it locally,
         if a local file already exists - deletes it,
-        then timesmaps it with UNIX time and
-        stores in in S3"""
+        """
 
 
         URL_OF_SCHEDULE_PDF = 'http://www.csun.edu/OpenClasses'
@@ -345,17 +349,19 @@ def main():
         timestamp = int(time.time())
 
         # waits until the file appears
-        # for debug puproses only, probably wont be needed
+        # for debug purposes only, probably wont be needed
         if not os.path.isfile(FILE_SAVE_PATH):
             print('WAITING FOR THE FILE TO DOWNLOAD')
             time.sleep(1)
 
-        logging.debug('UPLOADING to S3')
-        timestamped_filename = "{}_openclasses.pdf".format(str(timestamp))
-        s3 = boto3.resource('s3')
-        s3.Object('csunninja', timestamped_filename).put(Body=open(FILE_SAVE_PATH, 'rb'))
         return
 
+
+    def get_time_of_publication(text):
+
+        pattern = re.compile(r'(Printed:\n(\d\d/\d\d/\d\d\d\d) (\d\d:\d\d:\d\d))')
+        times = pattern.search(text)
+        # print(times.groups())
 
 
     def launch():
@@ -384,6 +390,13 @@ def main():
         # get a raw text from the pdf
         text_source = pdf_to_txt(PDF_FILE_NAME, FIRST_PAGE, LAST_PAGE)
 
+        # extracts the date/time of publication
+        # presumably, iy's on every page as
+        # Printed: xx/xx/xxxx yy:yy:yy
+        time_of_publication = get_time_of_publication(text_source)
+
+
+
         # split to lines at every occurrence of the subject abbreviation
         text_source = cut_by_subject(text_source, set_of_course_subjects)
 
@@ -403,6 +416,11 @@ def main():
         pattern_search(list_of_lines)
 
         # print_a_list(list_of_lines)
+
+        #marks the time of the last_update
+
+        LastPDFUpdate.objects.create()
+
         logging.debug("FINISHED: Files parsing and database population")
 
     launch()

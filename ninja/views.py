@@ -1,15 +1,58 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, render_to_response
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 
+# local exports
+from .helpers import login_logout
 from .forms import LoginForm, SignUpForm, FilterForm, DPRUploadForm
 from .models import *
 
-# local exports
-from .helpers import login_logout
+@login_required()
+def return_all_required_sections(request, major='COMP'):
+    courses_toward_major =  Course.objects.filter(majorcourse__major__abbreviation=major).exclude(coursestaken__user=request.user)
+    return HttpResponse(courses_toward_major)
+
+@login_required
+def return_all_courses_taken_by_student(request):
+    user  = User.objects.get(username=request.user)
+    courses_taken = CoursesTaken.objects.filter(user=user).values_list('course_taken_id', flat=True)
+    list_of_courses_taken =[]
+    for course_taken in courses_taken:
+        list_of_courses_taken.append(Course.objects.get(id=course_taken))
+
+    return list_of_courses_taken
+
+
+
+def return_all_sections_toward_major(request, major="COMP"):
+
+    # at this stage all info is mocked and
+    # the only major in existence is COMP
+
+    # selects all sections that have enrollment < maximum
+    # with corresponding courses in the list of courses required
+    # towards the given major
+    # serialized by the helper function
+
+    from .endpoint.serialize_by_sections import serialize_by_sections
+    from django.db.models import F
+
+    major_courses =  Course.objects.filter(majorcourse__major__abbreviation=major)
+    sec = Section.objects.filter(course__in=major_courses, section_current_enrollment__lt=F('section_max_enrollment'))
+    result = serialize_by_sections(sec)
+    return HttpResponse(result)
+
+
+def load_mock_major_data(request):
+    from .DPR_mockup.mock_major_and_courses import create_majors, load_major_courses
+    create_majors()
+    load_major_courses()
+    messages.add_message(request, messages.SUCCESS, 'Mock major info loaded')
+    return redirect('index')
+
 
 
 def user_login(request):
@@ -99,12 +142,11 @@ def index(request):
     all_courses = Course.objects.all()
     context ={}
     if request.user.is_authenticated:
-        print(request.user)
-        filter, created =  UserFilters.objects.get_or_create(user=request.user)
-        days_list = filter.days_list()
+        filter_obj, created =  UserFilters.objects.get_or_create(user=request.user)
+        days_list = filter_obj.days_list()
 
         context = {"all_courses" : all_courses,
-               "days_list": days_list}
+                    "days_list": days_list}
     return render(request, "ninja/index.html", context)
 
 

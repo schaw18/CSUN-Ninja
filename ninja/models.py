@@ -52,11 +52,18 @@ class Course(models.Model):
     class Meta:
         unique_together = ('course_subject', 'course_level')
 
+    def __str__(self):
+        return "{}-{}".format(self.course_subject, self.course_level)
+
 
 class Section(models.Model):
+
     course = models.ForeignKey(Course, related_name="section")  # <Course object>
     class_number = models.CharField(max_length=10, primary_key=True)  # 543563
     section_number = models.CharField(max_length=10)  # 1 or 2 or 3
+    section_max_enrollment=models.IntegerField(default=0)
+    section_current_enrollment=models.IntegerField(default=0)
+
 
     def has_conflict(self, class_number):
         # accepts a class_number and decides if this class causes schedule conflict
@@ -64,7 +71,7 @@ class Section(models.Model):
         pass
 
     def __str__(self):
-        return self.class_number
+        return "{} ({} {})".format(self.class_number,self.course.course_subject, self.course.course_level)
 
 
 class SectionSchedule(models.Model):
@@ -147,12 +154,20 @@ class Major(models.Model):
     abbreviation = models.CharField(max_length=10, primary_key=True)
     description = models.TextField()
 
+    def __str__(self):
+        return "{} ({})".format(self.abbreviation, self.description)
+
+
 class MajorCourse(models.Model):
     # if a relation exists -> the course is strictly necessary towards
     #     the given major. It will not include general requirements.
-    #     Probaly only courses itemized on a Major Diagram
+    #     Probably only courses itemized on a Major Diagram
     course = models.ForeignKey(Course)
-    major =  models.ForeignKey(Major)
+    major = models.ForeignKey(Major)
+
+    def __str__(self):
+        return "{} {}-{}".format(self.major, self.course.course_subject, self.course.course_level)
+
 
 class UserMajor(models.Model):
     # if relation exists -> the user indicated the major
@@ -209,6 +224,11 @@ class UserFilters(models.Model):
             days.append("Saturday")
         return days
 
+
 class DRPfile(models.Model):
     # user = models.OneToOneField(User)
     docfile = models.FileField(upload_to='dprs/')
+
+
+class LastPDFUpdate(models.Model):
+    last_update_time = models.DateTimeField(auto_now_add=True, primary_key=True)

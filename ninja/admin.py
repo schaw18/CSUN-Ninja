@@ -5,4 +5,6 @@ admin.site.register(Section)
 admin.site.register(Course)
 admin.site.register(CoursesTaken)
 admin.site.register(FAQ)
+admin.site.register(Major)
+admin.site.register(MajorCourse)
 

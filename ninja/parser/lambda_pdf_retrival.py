@@ -1,3 +1,7 @@
+# FOR USE with LAMBDA
+# not directly relevant for this project
+# I don't really know why I keep it here
+
 import urllib
 
 import time

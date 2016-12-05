@@ -1,0 +1,3 @@
+#Major abbreviation <semicolon>Description
+COMP:Computer Science
+MATH:Mathematics

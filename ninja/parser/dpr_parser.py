@@ -4,11 +4,11 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
 import os, re, logging
+from ..models import Course
 
 def main():
 
     def pdf_to_txt(filename):
-        fp = open(filename, 'rb')
         rsrcmgr = PDFResourceManager()
         retstr = StringIO()
         codec = 'utf-8'
@@ -17,20 +17,24 @@ def main():
         maxpages = 0
         caching = True
         pagenos=set()
+        
+        fp = open(filename, 'rb')
+        if fp:
+            device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
 
-        device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
+            for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
+                interpreter.process_page(page)
 
-        for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
-            interpreter.process_page(page)
+            str = retstr.getvalue()
 
-        str = retstr.getvalue()
-
-        fp.close()
-        device.close()
-        retstr.close()
-
-        return str
+            fp.close()
+            device.close()
+            retstr.close()
+            return str
+        else:
+            logging.ERROR('ERROR: couldn\'t open PDF source file')
+            return None
 
     def load_subjects(filename):
         """takes a txt file of course subjects, cleans a bit
@@ -66,15 +70,6 @@ def main():
             #print(subject)
         return text_source
 
-    def pattern_search(dpr_text):
-        ge_pattern = re.compile(r'GE.*:\n(?:(?:[A-Z]{2,4}|[A-Z]{1,2} [A-Z])\s+(?:\d{3}(?:[A-Z]{1,2})?(?:,|\n))+)+')
-
-        ge_list = re.findall(ge_pattern, dpr_text)
-        #iterator = re.finditer(ge_pattern, dpr_text)
-
-        for result in ge_list:
-            print(result)
-
     def clean_dpr(dpr_text):
         page_pattern = re.compile(r'\nPage\s\d{1,}\sof\s\d{1,}\n+\x0c')
 
@@ -86,9 +81,59 @@ def main():
         dpr_text = dpr_text.replace('  ,', ',')
         dpr_text = dpr_text.replace(' ,', ',')
         dpr_text = dpr_text.replace(',\n', '\n')
+        dpr_text = dpr_text.replace(' \n', '\n')
         dpr_text = dpr_text.replace("\n\n", '\n')
 
         return dpr_text
+
+    def udge_pattern_search(dpr_text):
+        ge_block_pattern = re.compile(r'GE.*:\s(?:\w+\s?\w+\s+(?:\d{1,3}[A-Z]*?(?:,|\s))+)+')
+        subject_pattern = re.compile(r'(\w+\s?\w+)\s+')
+        ge_course_pattern = re.compile(r'(?P<course_subject>\w+\s?\w+)\s+'
+        			       r'(?P<course_level>\d{1,3}[A-Z]*?)')
+        ge_set = set()
+        
+        ge_blocks = re.findall(ge_block_pattern, dpr_text)
+
+        for ge_block in ge_blocks:
+            ge_block = re.split('\n', ge_block)
+
+            # 1st element in list is the GE type
+            ge_type = ge_block[0]
+
+            for course_list in ge_block[1:len(ge_block)]:
+                subject = re.findall(subject_pattern, course_list)
+                if subject:
+                    course_list = course_list.replace(',', '\n' + subject[0] + ' ')
+                    course_list = course_list.replace('  ', ' ')
+                    course_list = re.split('\n', course_list)
+                    for course in course_list:
+                        ge_set.add(course)
+
+        for course in ge_set:
+            mo = ge_course_pattern.search(course)
+            if mo:
+                model_population(mo)
+            else:
+                logging.debug('FAILED to find PATTERN in the course: \"%s\"\n' % course)
+
+                
+    def courses_taken_search(dpr_text):
+        courses_taken_pattern = re.compile(r'^\s*(?P<year_taken>\d{2})'
+                                           r'(?P<semester_taken>[A-Z]{2})\s+'
+                                           r'(?P<course_subject>\w+\s?\w+)\s+'
+                                           r'(?P<course_level>\d{1,3}[A-Z]*?)$', re.MULTILINE)
+        courses_taken = re.finditer(courses_taken_pattern, dpr_text)
+        
+        #for mo in courses_taken:
+            #taken_model_population(mo)
+
+    def model_population(mo):
+        try:
+            course_subject = mo.group('course_subject')
+            course_level = mo.group('course_level')
+        except AttributeError:
+            logging.warning('FAILED to split re.object to groups')
 
 #==============================================================================#
 
@@ -110,13 +155,19 @@ def main():
     # clean up and filter dpr text
     text_source = clean_dpr(text_source)
 
-    # begin pattern matching
-    pattern_search(text_source)
+    # check for classes taken
+    courses_taken_search(text_source)
+    
+    # check that the UDGE requirement is met
+    udge_pattern_search(text_source)
 
     # output to file (for debugging purposes)
     output_text = open('dpr_output.txt', 'w')
     output_text.write(text_source)
     output_text.close()
 
+    logging.debug('FINISH File Parsing')
+
 if __name__ == '__main__':
-    main()
+    print(sys.path)
+    #main()

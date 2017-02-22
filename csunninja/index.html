@@ -56,8 +56,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#" style="color: #ffffff; font-family: Georgia; font-size: 24pt;"><strong>CSUN Ninja</strong></a>
-		  <img src="./img/ninja-portrait-white.png" width="45" height="45"></img>
+          <img src="./img/ninja-portrait-white.png" width="45" height="45"></img>
+		  <a class="navbar-brand" href="#" style="color: #ffffff; font-family: Georgia; font-size: 24pt;"><strong>CSUN Ninja</strong></a>
+		  
 		 </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right">
@@ -67,7 +68,7 @@
             <div class="form-group">
               <input type="password" placeholder="Password" class="form-control">
             </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
+            <button type="submit" formaction="dashboard.html" class="btn btn-success">Sign in</button>
           </form>
         </div><!--/.navbar-collapse -->
       </div>
@@ -92,9 +93,8 @@
 		
 		  <!-- Modal content-->
 		  <div class="modal-content">
-			<div class="modal-header">
-			  <button type="button" class="close" data-dismiss="modal">&times;</button>
-			  <h4 class="modal-title">New User Registration</h4>
+			<div class="modal-header bg-primary">
+			  <h4 class="modal-title"><img src="./img/ninja-portrait-white.png" height="45" width="45" style="color: #FFF;"></img>&emsp;New User Registration</h4>
 			</div>
 			<div class="modal-body">
 			  <form>
@@ -126,11 +126,11 @@
 	
 	
       <!-- Example row of columns -->
-		<div class="row">
+		<div class="row" style="margin-bottom: 10px;">
 			<div class="col-sm-6 col-md-4">
 				
 				<div class="thumbnail text-center" style="height: 450px;">
-					<img src="./img/DPR-Doc.PNG" width="180" height="180"></img>
+					<img src="./img/DPR-Doc.png" width="180" height="180"></img>
 					<h3>Upload your DPR</h3>
 					<div class="caption text-center">
 						<p><button id="dpr-button" class="btn btn-primary btn-lg" role="button">DETAILS</button></p>
@@ -166,7 +166,7 @@
 	  </div>
 	  </div>
 	 
-	  <div class="container">
+	  <!--<div class="container">
 	  <!--<div class="row">
 	  	<h2>Here are a few of the features that our product offers.</h2>
         <div class="col-md-4">
@@ -188,14 +188,14 @@
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
       </div>
-		-->
+		
      
-    </div> <!-- /container -->
+    </div>--> <!-- /container -->
 	
-      <footer style="background: #383838; height: 125px; padding: 15px;">
-        <p style="color: white;">&copy; 2016 - 2017 CSUN Ninja</p>
-		<p style="text-align: right;"><a href="https://www.facebook.com"><img src="./img/facebook-icon.png" width="45" height="45"></img></a></p>
-		<p>Icons made by <a href="http://www.freepik.com"</a></p>
+      <footer style="background: #383838; height: 65px; width: 100%; padding: 15px; ">
+        <p style="display: inline; color: white;">&copy; 2016 - 2017 CSUN Ninja</p>
+		<div style="float: right;"><a href="https://www.facebook.com"><img src="./img/facebook-icon.png" width="45" height="45"></img></a></div>
+		<p>Icons made by <a href="http://www.freepik.com"</p>
       </footer>
 
     <!-- Bootstrap core JavaScript
@@ -205,6 +205,7 @@
 	<script>
 		
 		$(document).ready(function() {
+			$('body').css('padding-top', $('#navbar').height());
 			$('#dpr-button').click(function(){
 				$('#dpr-details').show();
 			});
@@ -216,9 +217,20 @@
 			});
 	
 		});
+		
+		$(window).resize(function () { 
+			$('body').css('padding-top', $('#navbar').height());
+		});
+
+		$(window).load(function () { 
+			$('body').css('padding-top', $('#navbar').height());         
+		});
 	</script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="./js/bootstrap.min.js"></script>
+	<!--JQuery form validation plug-in-->
+	<script>"/jquery-validation-1.15.0/dist"</script>
+	
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>

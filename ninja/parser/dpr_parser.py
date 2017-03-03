@@ -4,7 +4,9 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
 import os, re, logging
-from ..models import Course
+
+from ..models import Course, CoursesTaken
+from django.core.exceptions import ObjectDoesNotExist
 
 def main():
 
@@ -87,7 +89,7 @@ def main():
         return dpr_text
 
     def udge_pattern_search(dpr_text):
-        ge_block_pattern = re.compile(r'GE.*:\s(?:\w+\s?\w+\s+(?:\d{1,3}[A-Z]*?(?:,|\s))+)+')
+        ge_block_pattern = re.compile(r'(?:GE|COURSE LIST).*:\s(?:\w+\s?\w+\s+(?:\d{1,3}[A-Z]*?(?:,|\s))+)+')
         subject_pattern = re.compile(r'(\w+\s?\w+)\s+')
         ge_course_pattern = re.compile(r'(?P<course_subject>\w+\s?\w+)\s+'
         			       r'(?P<course_level>\d{1,3}[A-Z]*?)')
@@ -97,6 +99,7 @@ def main():
 
         for ge_block in ge_blocks:
             ge_block = re.split('\n', ge_block)
+            print(ge_block)
 
             # 1st element in list is the GE type
             ge_type = ge_block[0]
@@ -117,16 +120,37 @@ def main():
             else:
                 logging.debug('FAILED to find PATTERN in the course: \"%s\"\n' % course)
 
-                
-    def courses_taken_search(dpr_text):
+    def taken_pattern_search(dpr_text):
         courses_taken_pattern = re.compile(r'^\s*(?P<year_taken>\d{2})'
                                            r'(?P<semester_taken>[A-Z]{2})\s+'
                                            r'(?P<course_subject>\w+\s?\w+)\s+'
                                            r'(?P<course_level>\d{1,3}[A-Z]*?)$', re.MULTILINE)
         courses_taken = re.finditer(courses_taken_pattern, dpr_text)
         
-        #for mo in courses_taken:
-            #taken_model_population(mo)
+        for mo in courses_taken:
+            taken_model_population(mo)
+
+    def recommended_model_population(mo):
+        try:
+            course_subject = mo.group('course_subject')
+            course_level = mo.group('course_level')
+        except AttributeError:
+            logging.warning('FAILED to split re match object to groups')
+            
+    def taken_model_population(mo):
+        try:
+            course_subject = mo.group('course_subject')
+            course_level = mo.group('course_level')
+        except AttributeError:
+            logging.warning('FAILED to split re match object to groups')
+
+        try:
+            course = Course.objects.get(
+                course_subject=course_subject,
+                course_level=course_level,
+            )
+        except ObjectDoesNotExist:
+            print('Could not find course %s %s' % (mo.group('course_subject'), mo.group('course_level')))
 
     def model_population(mo):
         try:
@@ -156,10 +180,10 @@ def main():
     text_source = clean_dpr(text_source)
 
     # check for classes taken
-    courses_taken_search(text_source)
+    taken_pattern_search(text_source)
     
     # check that the UDGE requirement is met
-    udge_pattern_search(text_source)
+    # recommended_pattern_search(text_source)
 
     # output to file (for debugging purposes)
     output_text = open('dpr_output.txt', 'w')
@@ -169,5 +193,4 @@ def main():
     logging.debug('FINISH File Parsing')
 
 if __name__ == '__main__':
-    print(sys.path)
-    #main()
+    main()

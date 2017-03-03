@@ -8,5 +8,3 @@ ninja/migrations/
 *.log
 *.pdf
 ninja/parser/dpr_output.txt
-ninja/parser/*.pdf
-ninja/parser/dpr_output.txt

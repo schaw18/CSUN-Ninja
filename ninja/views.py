@@ -143,6 +143,10 @@ def showSections(request):
 
 
 def upload(request):
+    # Invoke the dpr_parser
+    from .parser import dpr_parser
+    dpr_parser.main()
+
     # Handle file upload
     if request.method == 'POST':
         form = DPRUploadForm(request.POST, request.FILES)
@@ -161,3 +165,4 @@ def upload(request):
 
     # Render list page with the documents and the form
     return render(request, "ninja/upload.html", {'documents': documents, 'form': form} )
+

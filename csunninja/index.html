@@ -85,7 +85,7 @@
             <div class="form-group">
               <input type="password" placeholder="Password" id="signinPassword" class="form-control">
             </div>
-            <button type="submit" formaction="dashboard-ninja.html" id="btnSignin" class="btn btn-success">Sign in</button>
+            <button type="submit" formaction="dashboard.html" id="btnSignin" class="btn btn-success">Sign in</button>
           </form>
         </div><!--/.navbar-collapse -->
       </div>
@@ -433,106 +433,4 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
-<!--	<script>
-		function validateForm(){
-			var fName = document.getElementById("firstName");			
-			
-			if(fName==null || fName==""){
-				document.getElementById("fNameLabel").innerHTML = "First Name is Required";
-				return false;
-			} else {
-				document.getElementById("fNameLabel").innerHTML = "";
-			}
-		}
-	
-	function myFunction() {
-		var str = document.getElementById("emailAddress");
-		var patt = /^[a-z]+.[a-z]+.[0-9]+@my.csun.edu$/i;
-		var res = patt.test(str.value);
-		var complete = false;
-		
-		if(!res){
-			document.getElementById("emailAddressLabel").innerHTML = "You must enter a valid CSUN email address";
-			document.getElementById("emailAddress").style.border = "2px solid red";	
-			complete = false;			
-		} else {
-			document.getElementById("emailAddressLabel").innerHTML = "";
-			document.getElementById("emailAddress").style.border = "";
-			complete = true;
-		}
-		
-		var first = document.getElementById("firstName");
-		if(first.value==null || first.value==""){
-			document.getElementById("fNameLabel").innerHTML = "You must enter a first name";
-			document.getElementById("firstName").style.border = "2px solid red";
-			complete = false;
-		} else {
-			document.getElementById("fNameLabel").innerHTML = "";
-			document.getElementById("firstName").style.border = "";
-			complete = true;
-		}
-		
-		var last = document.getElementById("lastName");
-		if(last.value==null || last.value==""){
-			document.getElementById("lNameLabel").innerHTML = "You must enter a last name";
-			document.getElementById("lastName").style.border = "2px solid red";
-			complete = false;
-		} else {
-			document.getElementById("lNameLabel").innerHTML = "";
-			document.getElementById("lastName").style.border = "";
-			complete = true;
-		}
-		
-		var id = document.getElementById("CSUNID");
-		if(id.value==null || id.value==""){
-			document.getElementById("csunIDLabel").innerHTML = "You must enter a CSUN ID";
-			document.getElementById("CSUNID").style.border = "2px solid red";
-			complete = false;
-		} else {
-			document.getElementById("csunIDLabel").innerHTML = "";
-			document.getElementById("CSUNID").style.border = "";
-			complete = true;
-		}
-
-		var password = document.getElementById("password");
-		if(password.value==null || password.value==""){
-			document.getElementById("passwordLabel").innerHTML = "You must enter a password";
-			document.getElementById("password").style.border = "2px solid red";
-			complete = false;
-		} else {
-			document.getElementById("passwordLabel").innerHTML = "";
-			document.getElementById("password").style.border = "";
-			complete = true;
-		}
-
-		var confirmPW = document.getElementById("confirmPassword");
-		if(confirmPW.value==null || confirmPW.value==""){
-			document.getElementById("confirmPasswordLabel").innerHTML = "You must confirm your password";
-			document.getElementById("confirmPassword").style.border = "2px solid red";
-			complete = false;
-		} else {
-			document.getElementById("confirmPasswordLabel").innerHTML = "";
-			document.getElementById("confirmPassword").style.border = "";
-			if(confirmPW.value != password.value){
-			document.getElementById("confirmPasswordLabel").innerHTML = "Passwords do not match";
-			document.getElementById("confirmPassword").style.border = "2px solid red";
-			complete = false;
-			} else {
-			document.getElementById("confirmPasswordLabel").innerHTML = "";
-			document.getElementById("confirmPassword").style.border = "";
-			complete = true;			
-			}
-		}		
-		
-		if(complete == true){
-			var btn = document.getElementById("btnDone");
-			btn.removeAttribute('disabled', 'disabled');
-		} else {
-			btn.setAttribute('disabled', 'disabled');
-		}
-		
-		return true;
-		
-}
-	</script>-->
 </html>

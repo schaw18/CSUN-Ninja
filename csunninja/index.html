@@ -7,18 +7,18 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="../../../favicon.ico">
 
     <title>CSUN Ninja - Your source for up-to-date classes</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="jumbotron.css" rel="stylesheet">
+    <link href="/css/jumbotron.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -40,6 +40,22 @@
 		#drag-details{
 			display: none;
 		}
+		.validation {
+			color: red;
+			margin-left: 5px;
+			padding-bottom: 2px;
+			padding-top: 2px;
+		}
+		.form-group {
+			margin: 0px;
+			//padding: 0px 2px;
+			//border: 1px solid red;
+		}
+		
+		.form-field-error{
+			border: 2px solid red;
+		}
+		
 	</style>
 	
 
@@ -58,17 +74,18 @@
           </button>
           <img src="./img/ninja-portrait-white.png" width="45" height="45"></img>
 		  <a class="navbar-brand" href="#" style="color: #ffffff; font-family: Georgia; font-size: 24pt;"><strong>CSUN Ninja</strong></a>
-		  
+ 
 		 </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
+           <form class="navbar-form navbar-right" id="signinForm">
             <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
+              <input type="text" placeholder="Email" id="signinEmail" class="form-control">
+			  <input type="text" placeholder="@my.csun.edu" class="form-control" style="display: inline; font-size: 13pt; width: 145px;;" disabled>
             </div>
             <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
+              <input type="password" placeholder="Password" id="signinPassword" class="form-control">
             </div>
-            <button type="submit" formaction="dashboard.html" class="btn btn-success">Sign in</button>
+            <button type="submit" formaction="dashboard-ninja.html" id="btnSignin" class="btn btn-success">Sign in</button>
           </form>
         </div><!--/.navbar-collapse -->
       </div>
@@ -94,34 +111,46 @@
 		  <!-- Modal content-->
 		  <div class="modal-content">
 			<div class="modal-header bg-primary">
-			  <h4 class="modal-title"><img src="./img/ninja-portrait-white.png" height="45" width="45" style="color: #FFF;"></img>&emsp;New User Registration</h4>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title" ><img src="./img/ninja-portrait-white.png" height="45" width="45" style="color: #FFF;"></img>&emsp;New User Registration</h4>
+			  
 			</div>
 			<div class="modal-body">
-			  <form>
+			  <form id="regForm" onsubmit="" method="post" >
 				<div class="form-group">
-				  <input type="text" id="firstName" placeholder="First Name" class="form-control">
+				  <input type="text" id="firstName" name="fName" placeholder="First Name" class="form-control" required>
+				  <div class="validation" id="fNameLabel"></div>
 				</div>
 				<div class="form-group">
 				  <input type="text" id="lastName" placeholder="Last Name" class="form-control">
-				</div>		
+				</div>	
+				<div class="validation" id="lNameLabel"></div>
+				<div class="form-group">
+				  <input type="text" id="emailAddress" placeholder="CSUN Email Address" class="form-control" style="width: 60%; display: inline;">
+				  <input type="text" placeholder="@my.csun.edu" class="form-control" style="width: 39%; display: inline; font-size: 13pt;" disabled>
+				</div>					
+				<div class="validation" id="emailAddressLabel"></div>
 				<div class="form-group">
 				  <input type="text" id="CSUNID" placeholder="CSUN Student ID" class="form-control">
-				</div>			
-				<div class="form-group">
-				  <input type="password" id="password" placeholder="Password" class="form-control">
 				</div>
+				<div class="validation" id="CSUNIDLabel"></div>
+				<div class="form-group">
+				  <input type="password" id="password" placeholder="Password (8 characters minimum)" class="form-control">
+				</div>
+				<div class="validation" id="passwordLabel"></div>
 				<div class="form-group">
 				  <input type="password" id="confirmPassword" placeholder="Confirm Password" class="form-control">
 				</div>
-			  </form>		  
+				<div class="validation" id="confirmPasswordLabel"></div>
+			    </form>		  
 			</div>
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-success" data-dismiss="modal">Create Account</button>
-			  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  <button type="submit" id="btnDone" class="btn btn-success" data-dismiss="modal" >Done</button>
 			</div>
 		  </div>
 		  
 		</div>
+
 	  </div>
 	
 	
@@ -166,32 +195,7 @@
 	  </div>
 	  </div>
 	 
-	  <!--<div class="container">
-	  <!--<div class="row">
-	  	<h2>Here are a few of the features that our product offers.</h2>
-        <div class="col-md-4">
-          <h2>Upload your DPR</h2>
-		    <a href="#" class="thumbnail">
-				<img src="./img/photo-placeholder.png"></img>
-			</a>
-          <p>By uploading your DPR from the CSUN Portal, we will determine which classes you need to take for your major. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-          <h2>Set your schedule</h2>
-          <p>By creating your schedule online for the upcoming semester, we will be able to provide major specific classes that fit into your schedule, thereofre, minimizing the time you spend on choosing classes. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-       </div>
-        <div class="col-md-4">
-          <h2>Drag & Drop Functionality</h2>
-          <p>Our product provides drag & drop functionality in order to make our user interface easier to use. Students can drag and drop the preferred classes into their schedule, minimizing the need to navigat through different web pages.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-      </div>
-		
-     
-    </div>--> <!-- /container -->
-	
+
       <footer style="background: #383838; height: 65px; width: 100%; padding: 15px; ">
         <p style="display: inline; color: white;">&copy; 2016 - 2017 CSUN Ninja</p>
 		<div style="float: right;"><a href="https://www.facebook.com"><img src="./img/facebook-icon.png" width="45" height="45"></img></a></div>
@@ -205,33 +209,330 @@
 	<script>
 		
 		$(document).ready(function() {
+			//Variables to check for form validation
+			var regFormError = [true, true, true, true, true, true];
+			var formError = [true, true];
+			
+			//Reset form data
+			$('#signinForm').trigger("reset");
+			$('#regForm').trigger("reset");
+			
+			//Disable form buttons until the fields are complete			
+			$('#btnDone').attr('disabled', 'disabled');
+			$('#btnSignin').attr('disabled', 'disabled');
+			
+			
 			$('body').css('padding-top', $('#navbar').height());
 			$('#dpr-button').click(function(){
 				$('#dpr-details').show();
 			});
+			
 			$('#schedule-button').click(function(){
 				$('#schedule-details').show();
 			});
 			$('#drag-button').click(function(){
 				$('#drag-details').show();
+			});	
+				
+			
+			$('#firstName').blur(function(){
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$('#fNameLabel').text('First Name is Required');
+					regFormError[0] = true;
+					validateRegForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					$('#fNameLabel').text('');
+					regFormError[0] = false;
+					validateRegForm();
+				}			
 			});
-	
-		});
+			
+			$('#lastName').blur(function(){
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$('#lNameLabel').text('Last Name is Required');
+					regFormError[1] = true;
+					validateRegForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					$('#lNameLabel').text('');
+					regFormError[1] = false;
+					validateRegForm();
+				}
+			
+			});
+			
+			$('#emailAddress').blur(function(){
+				var patt = /^[a-z]+.[a-z]+.[0-9]+/i;				
+				
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$('#emailAddressLabel').text('Email is Required');
+					regFormError[2] = true;
+					validateRegForm();
+				} else if(!patt.test($(this).val())) {
+					$(this).addClass('form-field-error');
+					$('#emailAddressLabel').text('Valid CSUN Email is required');
+					regFormError[2] = true;
+					validateRegForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					$('#emailAddressLabel').text('');
+					regFormError[2] = false;
+					validateRegForm();
+				}
+			
+			});
+			
+			$('#CSUNID').blur(function(){				
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$('#CSUNIDLabel').text('CSUN ID is Required');
+					regFormError[3] = true;
+					validateRegForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					$('#CSUNIDLabel').text('');
+					regFormError[3] = false;
+					validateRegForm();
+				}
+			
+			});
+			
+			$('#password').blur(function(){				
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$('#passwordLabel').text('Password is Required');
+					regFormError[4] = true;
+					validateRegForm();
+				} else if ($(this).val().length < 8){
+					$(this).addClass('form-field-error');
+					$('#passwordLabel').text('Password must be 8 characters or more');
+					regFormError[4] = true;
+					validateRegForm();
+				} else {
+				
+					$(this).removeClass('form-field-error');
+					$('#passwordLabel').text('');
+					regFormError[4] = false;
+					validateRegForm();
+					
+					if ($('#confirmPassword').val() != $(this).val()){
+						$('#confirmPassword').addClass('form-field-error');
+						$('#confirmPasswordLabel').text('Passwords do not match');
+						regFormError[5] = true;
+						validateRegForm();
+					} else {
+						$('#confirmPassword').removeClass('form-field-error');
+						$('#confirmPasswordLabel').text('');
+						regFormError[5] = false;
+						validateRegForm();
+					}
+					
+
+				}
+
+		
+			});
+			
+			$('#confirmPassword').blur(function(){				
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$('#confirmPasswordLabel').text('You must confirm password');
+					regFormError[5] = true;
+					validateRegForm();
+				} else if ($('#password').val() != $(this).val()){
+					$(this).addClass('form-field-error');
+					$('#confirmPasswordLabel').text('Passwords do not match');
+					regFormError[5] = true;
+					validateRegForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					$('#confirmPasswordLabel').text('');
+					regFormError[5] = false;
+					validateRegForm();
+				}			
+			});
+			
+			
+			function validateRegForm() {			
+				var regFormErrors = 0; 
+				for(var i = 0; i < regFormError.length; i++){
+					if(regFormError[i] == true){
+						regFormErrors = regFormErrors + 1;
+					}					
+				}
+				
+				if(regFormErrors > 0){
+					$('#btnDone').attr('disabled', 'disabled');
+				} else {
+					$('#btnDone').removeAttr('disabled');				
+				}
+			}
+
+			$('#signinEmail').blur(function(){					
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					$(this).attr('placeholder', 'Email is Required');
+					formError[0] = true;
+					validateForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					formError[0] = false;
+					validateForm();
+				}
+			
+			});
+			
+			$('#signinPassword').keyup(function(){				
+				if($(this).val() == ""){
+					$(this).addClass('form-field-error');
+					formError[1] = true;
+					validateForm();
+				} else {
+					$(this).removeClass('form-field-error');
+					formError[1] = false;
+					validateForm();
+				}			
+			});
+			
+			function validateForm() {			
+				var formErrors = 0; 
+				for(var i = 0; i < formError.length; i++){
+					if(formError[i] == true){
+						formErrors = formErrors + 1;
+					}					
+				}
+				
+				if(formErrors > 0){
+					$('#btnSignin').attr('disabled', 'disabled');
+				} else {
+					$('#btnSignin').removeAttr('disabled');				
+				}
+			}
+			
+		$(window).load(function () { 
+			$('body').css('padding-top', $('#navbar').height()); 			
+		});		
 		
 		$(window).resize(function () { 
 			$('body').css('padding-top', $('#navbar').height());
 		});
-
-		$(window).load(function () { 
-			$('body').css('padding-top', $('#navbar').height());         
-		});
+			
+			
+	});
+		
 	</script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="./js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 	<!--JQuery form validation plug-in-->
 	<script>"/jquery-validation-1.15.0/dist"</script>
 	
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
+<!--	<script>
+		function validateForm(){
+			var fName = document.getElementById("firstName");			
+			
+			if(fName==null || fName==""){
+				document.getElementById("fNameLabel").innerHTML = "First Name is Required";
+				return false;
+			} else {
+				document.getElementById("fNameLabel").innerHTML = "";
+			}
+		}
+	
+	function myFunction() {
+		var str = document.getElementById("emailAddress");
+		var patt = /^[a-z]+.[a-z]+.[0-9]+@my.csun.edu$/i;
+		var res = patt.test(str.value);
+		var complete = false;
+		
+		if(!res){
+			document.getElementById("emailAddressLabel").innerHTML = "You must enter a valid CSUN email address";
+			document.getElementById("emailAddress").style.border = "2px solid red";	
+			complete = false;			
+		} else {
+			document.getElementById("emailAddressLabel").innerHTML = "";
+			document.getElementById("emailAddress").style.border = "";
+			complete = true;
+		}
+		
+		var first = document.getElementById("firstName");
+		if(first.value==null || first.value==""){
+			document.getElementById("fNameLabel").innerHTML = "You must enter a first name";
+			document.getElementById("firstName").style.border = "2px solid red";
+			complete = false;
+		} else {
+			document.getElementById("fNameLabel").innerHTML = "";
+			document.getElementById("firstName").style.border = "";
+			complete = true;
+		}
+		
+		var last = document.getElementById("lastName");
+		if(last.value==null || last.value==""){
+			document.getElementById("lNameLabel").innerHTML = "You must enter a last name";
+			document.getElementById("lastName").style.border = "2px solid red";
+			complete = false;
+		} else {
+			document.getElementById("lNameLabel").innerHTML = "";
+			document.getElementById("lastName").style.border = "";
+			complete = true;
+		}
+		
+		var id = document.getElementById("CSUNID");
+		if(id.value==null || id.value==""){
+			document.getElementById("csunIDLabel").innerHTML = "You must enter a CSUN ID";
+			document.getElementById("CSUNID").style.border = "2px solid red";
+			complete = false;
+		} else {
+			document.getElementById("csunIDLabel").innerHTML = "";
+			document.getElementById("CSUNID").style.border = "";
+			complete = true;
+		}
+
+		var password = document.getElementById("password");
+		if(password.value==null || password.value==""){
+			document.getElementById("passwordLabel").innerHTML = "You must enter a password";
+			document.getElementById("password").style.border = "2px solid red";
+			complete = false;
+		} else {
+			document.getElementById("passwordLabel").innerHTML = "";
+			document.getElementById("password").style.border = "";
+			complete = true;
+		}
+
+		var confirmPW = document.getElementById("confirmPassword");
+		if(confirmPW.value==null || confirmPW.value==""){
+			document.getElementById("confirmPasswordLabel").innerHTML = "You must confirm your password";
+			document.getElementById("confirmPassword").style.border = "2px solid red";
+			complete = false;
+		} else {
+			document.getElementById("confirmPasswordLabel").innerHTML = "";
+			document.getElementById("confirmPassword").style.border = "";
+			if(confirmPW.value != password.value){
+			document.getElementById("confirmPasswordLabel").innerHTML = "Passwords do not match";
+			document.getElementById("confirmPassword").style.border = "2px solid red";
+			complete = false;
+			} else {
+			document.getElementById("confirmPasswordLabel").innerHTML = "";
+			document.getElementById("confirmPassword").style.border = "";
+			complete = true;			
+			}
+		}		
+		
+		if(complete == true){
+			var btn = document.getElementById("btnDone");
+			btn.removeAttribute('disabled', 'disabled');
+		} else {
+			btn.setAttribute('disabled', 'disabled');
+		}
+		
+		return true;
+		
+}
+	</script>-->
 </html>

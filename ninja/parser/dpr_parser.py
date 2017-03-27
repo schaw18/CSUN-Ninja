@@ -5,11 +5,12 @@ from pdfminer.pdfpage import PDFPage
 from io import StringIO
 import os, re, logging
 
-from ..models import Course, CoursesTaken
+from ..models import Course, CoursesTaken, CoursesRecommended, DPRfile
+from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
-def main():
-
+def main(request):
+    
     def pdf_to_txt(filename):
         rsrcmgr = PDFResourceManager()
         retstr = StringIO()
@@ -88,7 +89,7 @@ def main():
 
         return dpr_text
 
-    def udge_pattern_search(dpr_text):
+    def recommended_pattern_search(dpr_text):
         ge_block_pattern = re.compile(r'(?:GE|COURSE LIST).*:\s(?:\w+\s?\w+\s+(?:\d{1,3}[A-Z]*?(?:,|\s))+)+')
         subject_pattern = re.compile(r'(\w+\s?\w+)\s+')
         ge_course_pattern = re.compile(r'(?P<course_subject>\w+\s?\w+)\s+'
@@ -99,7 +100,6 @@ def main():
 
         for ge_block in ge_blocks:
             ge_block = re.split('\n', ge_block)
-            print(ge_block)
 
             # 1st element in list is the GE type
             ge_type = ge_block[0]
@@ -116,7 +116,7 @@ def main():
         for course in ge_set:
             mo = ge_course_pattern.search(course)
             if mo:
-                model_population(mo)
+                recommended_model_population(mo)
             else:
                 logging.debug('FAILED to find PATTERN in the course: \"%s\"\n' % course)
 
@@ -128,7 +128,8 @@ def main():
         courses_taken = re.finditer(courses_taken_pattern, dpr_text)
         
         for mo in courses_taken:
-            taken_model_population(mo)
+            pass
+            #taken_model_population(mo)
 
     def recommended_model_population(mo):
         try:
@@ -136,7 +137,23 @@ def main():
             course_level = mo.group('course_level')
         except AttributeError:
             logging.warning('FAILED to split re match object to groups')
-            
+
+        try:
+            course = Course.objects.get(
+                course_subject=course_subject,
+                course_level=course_level,
+            )
+
+            rec_course, created = CoursesRecommended.objects.update_or_create(
+                user=request.user,
+                course_recommended=course
+            )
+            rec_course.save()
+        except ObjectDoesNotExist:
+            logging.warning('FAILED to GET recommended course: \"%s %s\"' %(course_subject, course_level))
+        except IntegrityError:
+            logging.warning('FAILED to CREATE/UPDATE recommended course: \"%s %s\"' %(course_subject, course_level))
+    
     def taken_model_population(mo):
         try:
             course_subject = mo.group('course_subject')
@@ -149,48 +166,49 @@ def main():
                 course_subject=course_subject,
                 course_level=course_level,
             )
-        except ObjectDoesNotExist:
-            print('Could not find course %s %s' % (mo.group('course_subject'), mo.group('course_level')))
+        except IntegrityError:
+            logging.warning('FAILED to Create/Update taken course: \"%s %s\"' %(course_subject, course_level))
 
-    def model_population(mo):
-        try:
-            course_subject = mo.group('course_subject')
-            course_level = mo.group('course_level')
-        except AttributeError:
-            logging.warning('FAILED to split re.object to groups')
+    def launch():
+        if request.user.is_authenticated:
+            # This is a path to the txt file containing all subject abbreviations
+            SUBJECTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'course_subjects.txt')
+            # get a set of all course abbreviations(from a file)
+            set_of_course_subjects = load_subjects(SUBJECTS_FILE)
 
-#==============================================================================#
+            logging.debug('START File Parsing')
 
-    # This is a path to the source PDF file
-    DPR_FILE_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SampleDPR.pdf')
-    # This is a path to the txt file containing all subject abbreviations
-    SUBJECTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'course_subjects.txt')
+            dpr_object = None
+            try:
+                # Try to retrieve single dpr object
+                dpr_object = DPRfile.objects.get(user=request.user)
+            except ObjectDoesNotExist:
+                logging.warning('FAILED to RETRIEVE DPR file for user \'%s\'' %(request.user.username))
 
-    logging.debug('START File Parsing')
-
-    # get a set of all course abbreviations(from a file)
-    set_of_course_subjects = load_subjects(SUBJECTS_FILE)
-    # get a raw text from the pdf
-    text_source = pdf_to_txt(DPR_FILE_NAME)
-
-    # split to lines at every occurrence of the subject abbreviation
-    text_source = cut_by_subject(text_source, set_of_course_subjects)
-
-    # clean up and filter dpr text
-    text_source = clean_dpr(text_source)
-
-    # check for classes taken
-    taken_pattern_search(text_source)
+            if dpr_object:
+                # get a raw text from the pdf
+                text_source = pdf_to_txt(dpr_object.docfile.path)
     
-    # check that the UDGE requirement is met
-    # recommended_pattern_search(text_source)
+                # split to lines at every occurrence of the subject abbreviation
+                text_source = cut_by_subject(text_source, set_of_course_subjects)
+            
+                # clean up and filter dpr text
+                text_source = clean_dpr(text_source)
+            
+                # check for classes taken
+                #taken_pattern_search(text_source)
+            
+                # check that the UDGE requirement is met
+                recommended_pattern_search(text_source)
+            
+                # output to file (for debugging purposes)
+                # output_text = open('dpr_output.txt', 'w')
+                # output_text.write(text_source)
+                # output_text.close()
 
-    # output to file (for debugging purposes)
-    output_text = open('dpr_output.txt', 'w')
-    output_text.write(text_source)
-    output_text.close()
+            logging.debug('FINISH File Parsing')
 
-    logging.debug('FINISH File Parsing')
+    launch()
 
 if __name__ == '__main__':
     main()

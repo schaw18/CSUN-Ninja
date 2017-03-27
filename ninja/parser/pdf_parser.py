@@ -352,8 +352,11 @@ def main():
 
         logging.debug('UPLOADING to S3')
         timestamped_filename = "{}_openclasses.pdf".format(str(timestamp))
+
+        ## Lev: S3 code needs authentication
         # s3 = boto3.resource('s3')
         # s3.Object('csunninja', timestamped_filename).put(Body=open(FILE_SAVE_PATH, 'rb'))
+
         return
 
 

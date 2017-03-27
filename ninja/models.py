@@ -125,6 +125,15 @@ class CoursesTaken(models.Model):
                                  self.course_taken.course_subject,
                                  self.course_taken.course_level)
 
+class CoursesRecommended(models.Model):
+    #  a relation, if exists  -> this course is recommended for the user
+    user = models.ForeignKey(User)
+    course_recommended = models.ForeignKey(Course)
+
+    def __str__(self):
+        return "{} {}-{}".format(self.user.username,
+                                 self.course_recommended.course_subject,
+                                 self.course_recommended.course_level)
 
 class SectionShortList(models.Model):
     # a relation, if exists  -> this user
@@ -209,6 +218,6 @@ class UserFilters(models.Model):
             days.append("Saturday")
         return days
 
-class DRPfile(models.Model):
-    # user = models.OneToOneField(User)
+class DPRfile(models.Model):
+    user = models.OneToOneField(User)
     docfile = models.FileField(upload_to='dprs/')

@@ -1,3 +1,4 @@
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -93,7 +94,6 @@ def update_classes(request):
     return redirect('index')
 
 def index(request):
-
     #     shows a  simple list of all courses
     #     in the database
     all_courses = Course.objects.all()
@@ -143,16 +143,12 @@ def showSections(request):
 
 
 def upload(request):
-    # Invoke the dpr_parser
-    from .parser import dpr_parser
-    dpr_parser.main()
-
     # Handle file upload
     if request.method == 'POST':
         form = DPRUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            newdoc = DRPfile(docfile = request.FILES['docfile'])
             user=request.user
+            newdoc = DPRfile(user = user, docfile = request.FILES['docfile'])
             newdoc.save()
 
             # Redirect to the document list after POST
@@ -161,8 +157,20 @@ def upload(request):
         form = DPRUploadForm() # A empty, unbound form
 
     # Load documents for the list page
-    documents = DRPfile.objects.all()
+    documents = DPRfile.objects.all()
 
     # Render list page with the documents and the form
     return render(request, "ninja/upload.html", {'documents': documents, 'form': form} )
 
+def dpr_parser(request):
+    from .parser import dpr_parser
+
+    context = {}
+
+    if request.user.is_authenticated:
+        dpr_parser.main(request)
+        messages.add_message(request, messages.INFO, 'DPR Parsed')
+        recommended_courses = CoursesRecommended.objects.filter(user=request.user)
+        context = {"recommended_courses" : recommended_courses}
+
+    return render(request, "ninja/recommended.html", context)

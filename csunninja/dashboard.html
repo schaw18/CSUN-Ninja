@@ -40,11 +40,7 @@
 		#drag-details{
 			display: none;
 		}
-		
-		tr:hover {
-			cursor: pointer;
-		}
-		
+				
 		.table-heading:hover {
 			cursor: default;
 		}
@@ -62,8 +58,9 @@
 			text-align: center;		
 		}
 		
-		.schedule td:hover {
+		.schedule tbody > tr > td:hover {	
 			background: #eee;
+			cursor: pointer;
 		}	
 		
 		.schedule {
@@ -73,12 +70,15 @@
 		td {
 			text-align: center;
 		}
+		
 		body {
 			background-image: url('img/ninja-portrait.png');
-			background-position: center center;
+			background-attachment: fixed;
+			background-position: center;
 			background-repeat: no-repeat;
-			background-size: 50% 50%;
+			background-size: 45% 60%;
 		}
+		
 	</style>
 	
 
@@ -96,7 +96,7 @@
             <span class="icon-bar"></span>
           </button>
 		  <img src="./img/ninja-portrait-white.png" width="45" height="45"></img>
-          <a class="navbar-brand" href="#" style="color: #ffffff; font-family: Georgia; font-size: 24pt;"><strong>CSUN Ninja</strong></a>
+          <span class="navbar-brand" style="color: #ffffff; font-family: Georgia; font-size: 24pt; cursor:default;"><strong>CSUN Ninja</strong></span>
 		  <form class="navbar-form navbar-right">
             <a class="btn btn-primary btn-md " href="#" role="button" data-toggle="modal" data-target="#dprModal">Upload DPR</a>
 			<a class="btn btn-success btn-md " href="index.html" role="button" >LOGOUT</a>
@@ -119,20 +119,19 @@
 			   <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span>&emsp;Upload DPR</h4>
 			</div>
 			<div class="modal-body">
-			  <form>
+			  <form id="uploadDPRForm" formenctyype="multipart/form-data" onsubmit="" method="post" >
 				<div class="row">
 					<div class="col-md-8">
-						<div class="form-group">
-						  <input type="file" id="dpr">
-						  
-						  
+						<div class="form-group">						
+							<div class="form-group">
+								<input type="file" id="dpr" accept=".pdf">
+						   </div>						  
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-							<!--<button type="button" class="btn btn-success" data-dismiss="modal">Browse</button>-->
-							
+							<button type="submit" class="btn btn-default" data-dismiss="modal">Save</button>							
+							<button type="button" id="uploadCancel" class="btn btn-default" data-dismiss="modal">Cancel</button>							
 						</div>
 					</div>
 				</div>
@@ -144,14 +143,15 @@
 	  </div>
 	
 	</div>
-	    <div class="container" style="margin-top: 5px; opacity: 0.6;">
-				<div class="panel panel-success" >
-					<div class="panel-heading" style="height: 60px; font-size: 1.75em; background: #00FF00; color: #000;""><span class="glyphicon glyphicon-calendar"></span>&emsp;CURRENT SCHEDULE</div>
+	    <div class="container " style="margin-top: 5px; ">
+				<div class="panel panel-primary" >
+					<div class="panel-heading" style="height: 60px; font-size: 1.75em;""><span class="glyphicon glyphicon-calendar"></span>&emsp;CURRENT SCHEDULE</div>
 					<div class="panel-body" style="min-height: 200px; padding: 0px;">
 						 <div class="table-responsive">
-							  <table class="table table-bordered schedule">
+							  <table class="table table-bordered schedule" >
 								   <thead>
 									  <tr class="table-heading">
+									    <th>Time</th>
 										<th>Monday</th>
 										<th>Tuesday</th>
 										<th>Wednesday</th>
@@ -163,52 +163,58 @@
 									
 									<tbody>
 										<tr>
+											<td>8:00am-12:30pm</td>
+											<td>COMP 333 <br/> M / W <br/> 8:00am - 9:15am <br/>3 units</td>
+											<td></td>
+											<td>COMP 333 <br/> M / W <br/> 8:00am - 9:15am <br/>3 units</td>
+											<td></td>
+											<td>COMP 496 <br/> F <br/> 8:00am - 10:45am <br/>3 units</td>
+											<td></td>											
+										</tr>
+										<tr>
+										    <td>12:31pm-5:00pm</td>
 											<td>COMP 491L <br/> M / W <br/> 12:30pm - 1:45pm <br/>3 units</td>
-											<td> <br/> <br/> <br/>3 units</td>
-											<td>M / W - 12:30pm - 1:45pm</td>
-											<td>1</td>
-											<td>1</td>
-											<td>1</td>										
+											<td>COMP 484 <br/> T / Th <br/> 1:00pm - 2:15pm <br/>3 units</td>
+											<td>COMP 491L <br/> M / W <br/> 12:30pm - 1:45pm <br/>3 units</td>
+											<td>COMP 484 <br/> T / Th <br/> 1:00pm - 2:15pm m <br/>3 units</td>		
+											<td></td>
+											<td></td>											
 										</tr>
 										<tr>
-											<td>2</td>
-											<td>COMP 310</td>
-											<td>F - 11:00am - 1:45pm</td>
-											<td>3</td>		
-											<td>1</td>
-											<td>1</td>										
+										    <td>2:31pm-5:45pm</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>											
 										</tr>
 										<tr>
-											<td>3</td>
-											<td>COMP 424</td>
-											<td>T - 7:00pm - 9:45pm</td>
-											<td>3</td>
-											<td>1</td>
-											<td>1</td>										
+											<td>5:46pm-9:00pm</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>	
+											<td></td>
+											<td></td>											
 										</tr>
 										<tr>
-											<td>4</td>
-											<td>COMP 440</td>
-											<td>Th - 7:00pm - 9:45pm</td>
-											<td>3</td>	
-											<td>1</td>
-											<td>1</td>										
+											<td>9:01pm-11:15pm</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>	
+											<td></td>
+											<td></td>											
 										</tr>
 										<tr>
-											<td>5</td>
-											<td>COMP 256</td>
-											<td>M - 7:00pm - 1:45pm</td>
-											<td>1</td>	
-											<td>1</td>
-											<td>1</td>											
-										</tr>
-										<tr>
-											<td>6</td>
-											<td>COMP 484</td>
-											<td>T / TH - 12:30pm - 1:45pm</td>
-											<td>1</td>	
-											<td>1</td>
-											<td>1</td>										
+										    <td>Online</td>
+											<td>ART 305</td>
+											<td></td>
+											<td></td>
+											<td></td>	
+											<td></td>
+											<td></td>											
 										</tr>
 									</tbody>
 							  </table>
@@ -216,11 +222,61 @@
 					</div>					
 				  </div>
 	    </div>
+	    <div class="container" style="margin-top: 5px; ">
+				<div class="panel panel-primary" >
+					<div class="panel-heading" style="height: 60px; font-size: 1.75em;""><span class="glyphicon glyphicon-search"></span>&emsp;FILTER CLASSES</div>
+					<div class="panel-body" style="min-height: 200px; padding: 15px;">
+					<div class="row">	 
+						<div class="col-md-6"> 
+							 <div class="form-group">
+							  <label for="major">Select Major:</label>
+							  <select class="form-control" id="major">
+								<option value="ComputerScience">Computer Science</option>
+								<option value="Mathematics">Mathematics</option>
+								<option value="Philosophy">Philosophy</option>
+								<option value="Business">Business</option>
+							  </select>
+							</div>							
+						</div>
+						<div class="col-md-6"> 
+							 <div class="form-group">
+							  <label for="sessionType">Select Session Type:</label>
+							  <select class="form-control" id="sessionType">
+								<option value="On-Campus">On-Campus</option>
+								<option value="Online Only">Online Only</option>
+								<option value="Hybrid">Hybrid</option>
+							  </select>
+							</div>
+						</div>
+					</div>
+					<div class="row">	 
+						<div class="col-md-6"> 
+							 <div class="form-group">
+							  <label for="days">Days:</label>
+								<div class="checkbox">
+								  <label><input type="checkbox" value="">Monday</label>
+								  <label><input type="checkbox" value="">Tuesday</label>
+								  <label><input type="checkbox" value="">Wednesday</label>
+								  <br>
+								  <label><input type="checkbox" value="">Thursday</label>
+								  <label><input type="checkbox" value="">Friday</label>
+								  <label><input type="checkbox" value="">Saturday</label>
+								</div>
+							</div>					
+						<div class="col-md-6"> 
+
+						</div>
+					</div>						
+					</div>					
+				  </div>
+	    </div>
+		</div>
+	
 	
 		<div class="container" style="margin-top: 5px; margin-bottom: 5px;">
 			<div style="min-height: 200px; width: 49%; float: left;">
 				  <div class="panel panel-primary">
-					<div class="panel-heading" style="font-size: 1.75em; opacity: 0.6;"><span class="glyphicon glyphicon-list" ></span>&emsp;LIST OF AVAILABLE CLASSES</div>
+					<div class="panel-heading" style="font-size: 1.75em;"><span class="glyphicon glyphicon-list" ></span>&emsp;LIST OF AVAILABLE CLASSES</div>
 					<div class="panel-body" style="min-height: 200px; ">
 						 <div class="table-responsive" >
 							  <table class="table table-hover" >
@@ -348,6 +404,7 @@
 		
 			</div>
 		</div>
+		</div>
       <footer style="background: #383838; height: 65px; width: 100%; padding: 15px;" >
         <p style="display: inline; color: white;">&copy; 2016 - 2017 CSUN Ninja</p>
 		<div style="float: right;"><a href="https://www.facebook.com"><img src="./img/facebook-icon.png" width="45" height="45"></img></a></div>
@@ -362,15 +419,7 @@
 		
 		$(document).ready(function() {
 			$('body').css('padding-top', $('#navbar').height());
-			$('#dpr-button').click(function(){
-				$('#dpr-details').show();
-			});
-			$('#schedule-button').click(function(){
-				$('#schedule-details').show();
-			});
-			$('#drag-button').click(function(){
-				$('#drag-details').show();
-			});					
+				
 		});
 		
 		$(window).resize(function () { 
@@ -381,6 +430,7 @@
 			$('body').css('padding-top', $('#navbar').height());         
 		});
 	</script>
+	<script src="CustomScript.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="./js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

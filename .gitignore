@@ -7,3 +7,4 @@ ninja_490/migrations/
 ninja/migrations/
 *.log
 *.pdf
+ninja/parser/dpr_output.txt

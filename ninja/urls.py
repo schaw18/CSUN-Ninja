@@ -17,5 +17,5 @@ urlpatterns = [
     url(r'^return_all_required_sections/(?:<major>[A-Z]+)?',
             views.return_all_required_sections,
             name='return_all_required_sections'),
-
+    url(r'^dpr_parser', views.dpr_parser, name='dpr_parser'),
 ]

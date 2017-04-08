@@ -1,0 +1,28 @@
+{% extends "ninja/base.html" %}
+
+{% block title %}
+Recommended Courses
+{% endblock %}
+
+{% block content %}
+	{% if request.user.is_authenticated %}
+		{% if recommended_courses %}
+			<p>Showing courses recommended for you:</p>
+	        <ul>
+			{% for course in recommended_courses %}
+            	<li>
+            	  {{ course.course_recommended.course_subject }},
+                  {{ course.course_recommended.course_level }},
+                  {{ course.course_recommended.course_title }},
+                  {{ course.course_recommended.course_type }},
+                  {{ course.course_recommended.course_units }},
+                </li>  
+            {% endfor %}
+            </ul>    
+		{% else %}
+			<p>No courses recommended for you</p>
+		{% endif %}
+    {% else %}    
+		<p>You are not authenticated</p>
+	{% endif %}
+{% endblock %}

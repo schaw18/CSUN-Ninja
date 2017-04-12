@@ -115,30 +115,30 @@
 			  
 			</div>
 			<div class="modal-body">
-			  <form id="regForm" onsubmit="" method="post" >
+			  <form id="regForm" action="http://localhost:8000/signup" method="post" >
 				<div class="form-group">
-				  <input type="text" id="firstName" name="fName" placeholder="First Name" class="form-control" required>
+				  <input type="text" id="firstName" name="fName" placeholder="First Name" class="form-control" value="a">
 				  <div class="validation" id="fNameLabel"></div>
 				</div>
 				<div class="form-group">
-				  <input type="text" id="lastName" placeholder="Last Name" class="form-control">
+				  <input type="text" id="lastName" placeholder="Last Name" class="form-control" value="a">
 				</div>	
 				<div class="validation" id="lNameLabel"></div>
 				<div class="form-group">
-				  <input type="text" id="emailAddress" placeholder="CSUN Email Address" class="form-control" style="width: 60%; display: inline;">
+				  <input type="text" id="emailAddress" placeholder="CSUN Email Address" class="form-control" style="width: 60%; display: inline;" value="a.a.8">
 				  <input type="text" placeholder="@my.csun.edu" class="form-control" style="width: 39%; display: inline; font-size: 13pt;" disabled>
 				</div>					
 				<div class="validation" id="emailAddressLabel"></div>
 				<div class="form-group">
-				  <input type="text" id="CSUNID" placeholder="CSUN Student ID" class="form-control">
+				  <input type="text" id="CSUNID" placeholder="CSUN Student ID" class="form-control" value="1111">
 				</div>
 				<div class="validation" id="CSUNIDLabel"></div>
 				<div class="form-group">
-				  <input type="password" id="password" placeholder="Password (8 characters minimum)" class="form-control">
+				  <input type="password" id="password" placeholder="Password (8 characters minimum)" class="form-control" value="aaaaaaaa">
 				</div>
 				<div class="validation" id="passwordLabel"></div>
 				<div class="form-group">
-				  <input type="password" id="confirmPassword" placeholder="Confirm Password" class="form-control">
+				  <input type="password" id="confirmPassword" placeholder="Confirm Password" class="form-control" value="aaaaaaaa">
 				</div>
 				<div class="validation" id="confirmPasswordLabel"></div>
 			    </form>		  

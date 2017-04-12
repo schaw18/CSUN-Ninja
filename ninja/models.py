@@ -238,4 +238,5 @@ class DPRfile(models.Model):
 
 
 class LastPDFUpdate(models.Model):
+    update_name = models.CharField(max_length=100)
     last_update_time = models.DateTimeField(auto_now_add=True, primary_key=True)

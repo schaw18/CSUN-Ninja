@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.urls import reverse
 
 # local exports
+from django.views.decorators.csrf import csrf_exempt
+
 from .helpers import login_logout
 from .forms import LoginForm, SignUpForm, FilterForm, DPRUploadForm
 from .models import *
@@ -183,18 +185,23 @@ def showSections(request):
     return render(request, "ninja/index.html", {"comp_sections" : comp_sections})
 
 
-
+@csrf_exempt
 def upload(request):
     # Handle file upload
     if request.method == 'POST':
+        print(request.FILES, request.POST)
+
         form = DPRUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            user=request.user
-            newdoc = DPRfile(user = user, docfile = request.FILES['docfile'])
+            print('is valid!')
+            # user=request.user
+            newdoc = DPRfile(
+                # user = user,
+                docfile = request.FILES['docfile'])
             newdoc.save()
 
-            # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('upload'))
+        # Redirect to the document list after POST
+        return HttpResponseRedirect(reverse('upload'))
     else:
         form = DPRUploadForm() # A empty, unbound form
 

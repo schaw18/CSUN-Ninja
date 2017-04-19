@@ -7,4 +7,5 @@ admin.site.register(CoursesTaken)
 admin.site.register(FAQ)
 admin.site.register(Major)
 admin.site.register(MajorCourse)
+admin.site.register(DPRfile)
 

@@ -7,9 +7,12 @@ class LoginForm(forms.Form):
 
 class SignUpForm(forms.Form):
     username = forms.CharField()
+	first_name = forms.CharField()
+	last_name = forms.CharField()
+	email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
     password_repeat = forms.CharField(widget=forms.PasswordInput)
-    email = forms.EmailField(required=False)
+    
 
 class FilterForm(forms.ModelForm):
     # Time fiters

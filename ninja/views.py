@@ -107,7 +107,7 @@ def user_sign_up(request):
                 messages.add_message(request, messages.WARNING, 'Passwords do NOT match')
                 return render(request, 'ninja/signup.html', {'form': form})
 
-            u = User(username=cd['username'], email=cd['password'])
+            u = User(username=cd['username'], first_name=cd['first_name'], last_name=['last_name'], email=cd['password'])
             u.set_password(cd['password'])
             u.save()
 

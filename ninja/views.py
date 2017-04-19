@@ -1,3 +1,4 @@
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
@@ -6,6 +7,8 @@ from django.contrib import messages
 from django.urls import reverse
 
 # local exports
+from django.views.decorators.csrf import csrf_exempt
+
 from .helpers import login_logout
 from .forms import LoginForm, SignUpForm, FilterForm, DPRUploadForm
 from .models import *
@@ -104,7 +107,7 @@ def user_sign_up(request):
                 messages.add_message(request, messages.WARNING, 'Passwords do NOT match')
                 return render(request, 'ninja/signup.html', {'form': form})
 
-            u = User(username=cd['username'], email=cd['password'])
+            u = User(username=cd['username'], first_name=cd['first_name'], last_name=cd['last_name'], email=cd['password'])
             u.set_password(cd['password'])
             u.save()
 
@@ -136,7 +139,6 @@ def update_classes(request):
     return redirect('index')
 
 def index(request):
-
     #     shows a  simple list of all courses
     #     in the database
     all_courses = Course.objects.all()
@@ -183,23 +185,41 @@ def showSections(request):
     return render(request, "ninja/index.html", {"comp_sections" : comp_sections})
 
 
-
+@csrf_exempt
 def upload(request):
     # Handle file upload
     if request.method == 'POST':
+        print(request.FILES, request.POST)
+
         form = DPRUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            newdoc = DRPfile(docfile = request.FILES['docfile'])
-            user=request.user
+            print('is valid!')
+            # user=request.user
+            newdoc = DPRfile(
+                # user = user,
+                docfile = request.FILES['docfile'])
             newdoc.save()
 
-            # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('upload'))
+        # Redirect to the document list after POST
+        return HttpResponseRedirect(reverse('upload'))
     else:
         form = DPRUploadForm() # A empty, unbound form
 
     # Load documents for the list page
-    documents = DRPfile.objects.all()
+    documents = DPRfile.objects.all()
 
     # Render list page with the documents and the form
     return render(request, "ninja/upload.html", {'documents': documents, 'form': form} )
+
+def dpr_parser(request):
+    from .parser import dpr_parser
+
+    context = {}
+
+    if request.user.is_authenticated:
+        dpr_parser.main(request)
+        messages.add_message(request, messages.INFO, 'DPR Parsed')
+        recommended_courses = CoursesRecommended.objects.filter(user=request.user)
+        context = {"recommended_courses" : recommended_courses}
+
+    return render(request, "ninja/recommended.html", context)

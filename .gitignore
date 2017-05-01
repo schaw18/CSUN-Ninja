@@ -5,3 +5,4 @@ ninja_490/__pycache__/
 *.log
 *.pdf
 ninja/parser/dpr_output.txt
+db.sqlite3

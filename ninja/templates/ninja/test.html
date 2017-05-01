@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+<body>
+<form id="regForm" >			
+  <input type="text" id="firstName" name="first_name" placeholder="First Name" value="a"><br>
+  <input type="text" id="lastName" name="last_name" placeholder="Last Name" value="a"><br>
+  <input type="text" id="emailAddress" name="email" placeholder="CSUN Email Address" value="a.a.8"><br>
+  <input type="text" id="CSUNID" name="username" placeholder="CSUN Student ID" value="1111"><br>
+  <input type="password" id="password" name="password" placeholder="Password (8 characters minimum)"value="aaaaaaaa"><br>
+  <input type="password" id="confirmPassword" name="password_repeat" placeholder="Confirm Password"value="aaaaaaaa"><br>
+  <button type="submit" id="btnDone" class="btn btn-success">Done</button> 
+</form>
+
+
+{% load staticfiles %}
+
+    <script src="{% static '/js/jquery-3.1.1.js'%}"></script>
+	<script>
+	
+		$('#btnDone').click(function(e){
+				alert("hi");
+				e.preventDefault();
+	
+				$.ajax({
+					type: 'POST',
+					url: 'http://localhost:8000/signup/',
+					data: {
+						first_name: $('#firstName').val(),
+						last_name: $('#lastName').val(),
+						email: $('#emailAddress').val(),
+						username: $('#CSUNID').val(),
+						password: $('#password').val(),
+						password_repeat: $('#confirmPassword').val(),
+						
+					},
+					success:function(){
+						alert('New User Created Successfully');
+					},	
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						alert(errorThrown + textStatus);
+					}					
+				});	
+		
+		});
+	
+	</script>
+</body>
+</html>

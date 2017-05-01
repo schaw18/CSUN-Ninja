@@ -228,11 +228,23 @@ def dpr_parser(request):
 
 def returnRecomended(request):
 
-    response = dict()
-    all_courses = Course.objects.all()
-    all_recommended = CoursesRecommended.objects.all()
-    all_available_recommended =  Course.objects.all().exclude(all_recommended)
+    all_courses = Course.objects.all().values('course_subject', 'course_level')
+    all_sections =  Section.objects.all()
+    all_schedules =  SectionSchedule.objects.all().values('section__course__course_subject',
+                                                          'section__course__course_level',
+                                                          'section__course__course_title',
+                                                          'section__course__course_units',
+                                                          'section__class_number',
+                                                          'instructor',
+                                                          'time_start',
+                                                          'time_end',
+                                                          'date_end',
+                                                          'date_start',
+                                                          'room')
+    # all_recommended = CoursesRecommended.objects.all()
+    # all_available_recommended =  Course.objects.all().exclude(all_recommended)
 
-    return JsonResponse({'results': list(all_available_recommended)})
+
+    return JsonResponse({'results': list(all_schedules)})
 
 

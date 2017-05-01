@@ -233,7 +233,7 @@ class UserFilters(models.Model):
         return days
 
 class DPRfile(models.Model):
-    user = models.OneToOneField(User)
+    #user = models.OneToOneField(User)
     docfile = models.FileField(upload_to='dprs/')
 
 

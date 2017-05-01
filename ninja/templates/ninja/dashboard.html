@@ -93,7 +93,7 @@
           <span class="navbar-brand" style="color: #ffffff; font-family: Georgia; font-size: 24pt; cursor:default;"><strong>CSUN Ninja</strong></span>
 		  <form class="navbar-form navbar-right">
             <a class="btn btn-primary btn-md " href="#" role="button" data-toggle="modal" data-target="#dprModal">Upload DPR</a>
-			<a class="btn btn-success btn-md " href="index.html" role="button" >LOGOUT</a>
+			<a class="btn btn-success btn-md " href="http://localhost:8000/" role="button" >LOGOUT</a>
 			<!--<button class="btn btn-success" data-toggle="modal" data-target="#dprModal">Upload Dpr</button>-->
           </form>
 		 </div>
@@ -121,11 +121,28 @@
 								<input type="file" id="dpr" accept=".pdf" name="docfile">
 						   </div>						  
 						</div>
+					
+					<div class="row" style="margin-left: 5px;">
+					<p>Documents:</p>
+					<p>
+						{% block content %}
+							{% if documents %}
+								<ul>
+								{% for document in documents %}
+									<li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
+								{% endfor %}
+								</ul>
+							{% else %}
+								<p>No documents.</p>
+							{% endif %}
+						{% endblock %}
+					</p>
+					</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<button type="submit" id="uploaddpr" class="btn btn-default" >Save</button>							
-							<button type="button" id="uploadCancel" class="btn btn-default" data-dismiss="modal">Cancel</button>							
+							<button type="button" id="uploadCancel" class="btn btn-default" data-dismiss="modal">Close</button>							
 						</div>
 					</div>
 				</div>
@@ -137,6 +154,7 @@
 	  </div>
 	
 	</div>
+
 	    <div class="container " style="margin-top: 5px; ">
 				<div class="panel panel-primary" >
 					<div class="panel-heading" style="height: 60px; font-size: 1.75em;""><span class="glyphicon glyphicon-calendar"></span>&emsp;CURRENT SCHEDULE</div>
@@ -420,29 +438,6 @@
 	<script>
 		
 
-		
-		$('#uploaddpr').click(function(e){
-			alert('test');
-			e.preventDefault();
-			$.ajax({
-				method: 'POST',
-				url: 'http://localhost:8000/upload/',
-			    data : formData,
-			    //processData: false,
-			    //contentType: false, 
-				data: {
-					docfile: $('#dpr').[0].files[0]					
-				},					
-				success: function(message){
-					alert(message);
-				},
-				failure: function(XMLHttpRequest, textStatus, errorThrown){
-					alert(errorThrown);
-				}		
-			
-			});
-		
-		});
 		
 		$(document).ready(function() {
 			$('body').css('padding-top', $('#navbar').height());

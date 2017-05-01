@@ -214,8 +214,8 @@ def upload(request):
             newdoc.save()
 
             # Redirect to the document list after POST
-            #return HttpResponseRedirect(reverse('dashboard'))
-            return HttpResponse('Document uploaded successfully!')
+            return HttpResponseRedirect(reverse('dashboard'))
+            #return HttpResponse('Document uploaded successfully!')
     else:
         form = DPRUploadForm() # A empty, unbound form
 
@@ -223,7 +223,7 @@ def upload(request):
     documents = DPRfile.objects.all()
 
     # Render list page with the documents and the form
-    return render(request, "ninja/upload.html", {'documents': documents, 'form': form} )
+    return render(request, "ninja/dashboard.html", {'documents': documents, 'form': form} )
 
 def dpr_parser(request):
     from .parser import dpr_parser

@@ -9,6 +9,7 @@ from django.urls import reverse
 
 # local exports
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .helpers import login_logout
 from .forms import LoginForm, SignUpForm, FilterForm, DPRUploadForm
@@ -58,12 +59,13 @@ def load_mock_major_data(request):
     return redirect('index')
 
 
-
+@csrf_exempt
 def user_login(request):
     # if successful redirects to index
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
+            print('in is valid')
             cd = form.cleaned_data
             user = authenticate(username=cd['username'],
                                 password=cd['password'])
@@ -73,23 +75,27 @@ def user_login(request):
                 if user.is_active:
                     login(request, user)
                     messages.add_message(request, messages.SUCCESS, 'Authorization successful.')
-                    return redirect('index')
+                    return HttpResponse('validated')
+                    #return redirect('index')
+                    #return HttpResponseRedirect('ninja/dashboard.html')
+                    #return render(request, 'ninja/dashboard.html')
 
                 else:
                     messages.add_message(request, messages.INFO, 'This user is suspended')
                     return render(request, 'ninja/login.html', {'form': form})
             else:
                 messages.add_message(request, messages.WARNING, 'Authorization FAILED.')
-                return render(request, 'ninja/login.html', {'form': form})
+                return HttpResponse('Invalid Password')
+                #return render(request, 'ninja/login.html', {'form': form})
     else:
         form = LoginForm()
-    return render(request, 'ninja/login.html', {'form': form})
+    return render(request, 'ninja/dashboard.html', {'form': form})
 
 def user_logout(request):
     logout(request)
     return redirect('login')
 
-
+@csrf_exempt
 def user_sign_up(request):
     # Reinventing the bicycle for educational purposes
     #   in production should use django validation.
@@ -97,23 +103,29 @@ def user_sign_up(request):
     #   and with very limited validation
     if request.method == 'POST':
         form = SignUpForm(request.POST)
+        print('in post')
+        if request.is_ajax():
+           print('is ajax')
         if form.is_valid():
             cd = form.cleaned_data
-
+            print('in is valid')
             if login_logout.user_exists(cd['username']):
-                messages.add_message(request, messages.WARNING, 'User exists. Please chose different username')
-                return render(request, 'ninja/signup.html', {'form': form})
+                #messages.add_message(request, messages.WARNING, 'User exists. Please chose different username')
+                return HttpResponse('User already exists!')
+                #return render(request, 'ninja/signup.html', {'form': form})
 
             if cd['password'] != cd['password_repeat']:
                 messages.add_message(request, messages.WARNING, 'Passwords do NOT match')
                 return render(request, 'ninja/signup.html', {'form': form})
-
-            u = User(username=cd['username'], first_name=cd['first_name'], last_name=['last_name'], email=cd['password'])
+            print(cd['username'])
+            u = User(username=cd['username'], first_name=cd['first_name'], last_name=['last_name'], email=cd['email'])
             u.set_password(cd['password'])
             u.save()
 
-            messages.add_message(request, messages.SUCCESS, 'SignUp successful! Please login')
-            return redirect('login')
+            #messages.add_message(request, messages.SUCCESS, 'SignUp successful! Please login')
+            #return redirect('login')
+            #return redirect('http://localhost:8080/ninja_490/csunninja/index.html')
+            return HttpResponse('Account created successfully. Please log in!')
 
 
         # if form is not valid, whatever that means
@@ -197,12 +209,13 @@ def upload(request):
             print('is valid!')
             # user=request.user
             newdoc = DPRfile(
-                # user = user,
-                docfile = request.FILES['docfile'])
+            # user = user,
+            docfile = request.FILES['docfile'])
             newdoc.save()
 
-        # Redirect to the document list after POST
-        return HttpResponseRedirect(reverse('upload'))
+            # Redirect to the document list after POST
+            #return HttpResponseRedirect(reverse('dashboard'))
+            return HttpResponse('Document uploaded successfully!')
     else:
         form = DPRUploadForm() # A empty, unbound form
 
@@ -247,4 +260,20 @@ def returnRecomended(request):
 
     return JsonResponse({'results': list(all_schedules)})
 
+@csrf_exempt
+def test(request):
+    #     shows a  simple list of all courses
+    #     in the database
 
+    print('in test')
+    if request.method == 'POST' and request.is_ajax():
+        username = request.POST.get('username')
+        return HttpResponse(json.dumps({'username': username}), content_type="application/json")
+    else:
+        return render(request, "ninja/test.html")
+
+@csrf_exempt
+def dashboard(request):
+    print('in dashboard')
+
+    return render(request, "ninja/dashboard.html")

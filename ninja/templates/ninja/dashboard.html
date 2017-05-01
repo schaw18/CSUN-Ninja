@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,21 +9,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-
+	{% load staticfiles %}
     <title>CSUN Ninja - Dashboard</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="jumbotron.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <link href="{% static '/css/jumbotron.css' %}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -72,7 +66,7 @@
 		}
 		
 		body {
-			background-image: url('img/ninja-portrait.png');
+			background-image: url('{% static 'img/ninja-portrait.png' %}');
 			background-attachment: fixed;
 			background-position: center;
 			background-repeat: no-repeat;
@@ -95,9 +89,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-		  <img src="./img/ninja-portrait-white.png" width="45" height="45"></img>
+		  <img src="{% static '/img/ninja-portrait-white.png' %}" width="45" height="45"></img>
           <span class="navbar-brand" style="color: #ffffff; font-family: Georgia; font-size: 24pt; cursor:default;"><strong>CSUN Ninja</strong></span>
-		 <div id="navbar" class="navbar-header in"> 
 		  <form class="navbar-form navbar-right">
             <a class="btn btn-primary btn-md " href="#" role="button" data-toggle="modal" data-target="#dprModal">Upload DPR</a>
 			<a class="btn btn-success btn-md " href="index.html" role="button" >LOGOUT</a>
@@ -120,7 +113,7 @@
 			   <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span>&emsp;Upload DPR</h4>
 			</div>
 			<div class="modal-body">
-			  <form id="uploadDPRForm" enctype="multipart/form-data" action="http://localhost:8000/upload/" method="post" >
+			  <form id="uploadDPRForm" enctype="multipart/form-data" method="post">
 				<div class="row">
 					<div class="col-md-8">
 						<div class="form-group">						
@@ -131,7 +124,7 @@
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
-							<button type="submit" class="btn btn-default" >Save</button>							
+							<button type="submit" id="uploaddpr" class="btn btn-default" >Save</button>							
 							<button type="button" id="uploadCancel" class="btn btn-default" data-dismiss="modal">Cancel</button>							
 						</div>
 					</div>
@@ -416,15 +409,40 @@
 		</div>
       <footer style="background: #383838; height: 65px; width: 100%; padding: 15px;" >
         <p style="display: inline; color: white;">&copy; 2016 - 2017 CSUN Ninja</p>
-		<div style="float: right;"><a href="https://www.facebook.com"><img src="./img/facebook-icon.png" width="45" height="45"></img></a></div>
+		<div style="float: right;"><a href="https://www.facebook.com"><img src="{% static 'img/facebook-icon.png' %}" width="45" height="45"></img></a></div>
 		<p>Icons made by <a href="http://www.freepik.com"</p>
       </footer>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="jquery-3.1.1.js"></script>
+    <script src="{% static '/js/jquery-3.1.1.js' %}"></script>
 	<script>
+		
+
+		
+		$('#uploaddpr').click(function(e){
+			alert('test');
+			e.preventDefault();
+			$.ajax({
+				method: 'POST',
+				url: 'http://localhost:8000/upload/',
+			    data : formData,
+			    //processData: false,
+			    //contentType: false, 
+				data: {
+					docfile: $('#dpr').[0].files[0]					
+				},					
+				success: function(message){
+					alert(message);
+				},
+				failure: function(XMLHttpRequest, textStatus, errorThrown){
+					alert(errorThrown);
+				}		
+			
+			});
+		
+		});
 		
 		$(document).ready(function() {
 			$('body').css('padding-top', $('#navbar').height());
@@ -439,10 +457,7 @@
 			$('body').css('padding-top', $('#navbar').height());         
 		});
 	</script>
-	<script src="CustomScript.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="./js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+	<script src="{% static '/js/CustomScript.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
   </body>
 </html>

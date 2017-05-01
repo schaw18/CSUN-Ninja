@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^dpr_parser', views.dpr_parser, name='dpr_parser'),
     url(r'^test', views.test, name='test'),
     url(r'^dashboard', views.dashboard, name='dashboard'),
+    url(r'^get_all_recommended', views.returnRecomended, name='available_recommended'),
+
 ]

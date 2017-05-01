@@ -2,6 +2,7 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
@@ -236,6 +237,16 @@ def dpr_parser(request):
         context = {"recommended_courses" : recommended_courses}
 
     return render(request, "ninja/recommended.html", context)
+
+
+def returnRecomended(request):
+
+    response = dict()
+    all_courses = Course.objects.all()
+    all_recommended = CoursesRecommended.objects.all()
+    all_available_recommended =  Course.objects.all().exclude(all_recommended)
+
+    return JsonResponse({'results': list(all_available_recommended)})
 
 @csrf_exempt
 def test(request):

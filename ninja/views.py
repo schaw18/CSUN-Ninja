@@ -207,10 +207,8 @@ def upload(request):
         form = DPRUploadForm(request.POST, request.FILES)
         if form.is_valid():
             print('is valid!')
-            # user=request.user
-            newdoc = DPRfile(
-            # user = user,
-            docfile = request.FILES['docfile'])
+            user=request.user
+            newdoc = DPRfile(user = user, docfile = request.FILES['docfile'])
             newdoc.save()
 
             # Redirect to the document list after POST

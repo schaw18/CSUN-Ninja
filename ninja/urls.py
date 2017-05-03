@@ -18,7 +18,6 @@ urlpatterns = [
             views.return_all_required_sections,
             name='return_all_required_sections'),
     url(r'^dpr_parser', views.dpr_parser, name='dpr_parser'),
-    url(r'^test', views.test, name='test'),
     url(r'^dashboard', views.upload, name='dashboard'),
     url(r'^get_all_recommended', views.returnRecomended, name='available_recommended'),
 

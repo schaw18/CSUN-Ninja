@@ -238,7 +238,7 @@ def dpr_parser(request):
 
     return render(request, "ninja/recommended.html", context)
 
-
+@csrf_exempt
 def returnRecomended(request):
 
     all_courses = Course.objects.all().values('course_subject', 'course_level')
@@ -257,8 +257,10 @@ def returnRecomended(request):
     # all_recommended = CoursesRecommended.objects.all()
     # all_available_recommended =  Course.objects.all().exclude(all_recommended)
 
-
-    return JsonResponse({'results': list(all_schedules)})
+    print(Section.objects.count())
+    #return JsonResponse({'results': list(all_schedules)})
+    return JsonResponse({'classes': [{'course': 'COMP 333', 'days': 'M / W 12:00-1:15', 'units': '3'},
+                                     {'course': 'COMP 496', 'days': 'T / R 1:00-2:15', 'units': '3'}]})
 
 @csrf_exempt
 def test(request):

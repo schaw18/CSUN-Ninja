@@ -261,19 +261,6 @@ def returnRecomended(request):
                                      {'course': 'COMP 496', 'days': 'T / R 1:00-2:15', 'units': '3'}]})
 
 @csrf_exempt
-def test(request):
-    #     shows a  simple list of all courses
-    #     in the database
-
-    print('in test')
-    if request.method == 'POST' and request.is_ajax():
-        username = request.POST.get('username')
-        return HttpResponse(json.dumps({'username': username}), content_type="application/json")
-    else:
-        return render(request, "ninja/test.html")
-
-@csrf_exempt
 def dashboard(request):
-    print('in dashboard')
 
     return render(request, "ninja/dashboard.html")

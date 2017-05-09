@@ -59,7 +59,7 @@
 		
 		.schedule {
 			margin: 0px;
-		}
+	    }
 
 		td {
 			text-align: center;
@@ -93,6 +93,9 @@
           <span class="navbar-brand" style="color: #ffffff; font-family: Georgia; font-size: 24pt; cursor:default;"><strong>CSUN Ninja</strong></span>
 		  <form class="navbar-form navbar-right">
             <a class="btn btn-primary btn-md " href="#" role="button" data-toggle="modal" data-target="#dprModal">Upload DPR</a>
+            {% if documents %}
+            <a class="btn btn-primary btn-md " id="btnViewRec" href="#" role="button" data-toggle="modal" data-target="#viewRec">Recommended Courses</a>
+            {% endif %}
 			<a class="btn btn-success btn-md " href="http://localhost:8000/" role="button" >LOGOUT</a>
 			<!--<button class="btn btn-success" data-toggle="modal" data-target="#dprModal">Upload Dpr</button>-->
           </form>
@@ -152,7 +155,43 @@
 		  
 		</div>
 	  </div>
-	
+      {% if documents %}
+      <div id="viewRec" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          
+          <div class="modal-content">
+            <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Recommended Courses</h4>
+            </div>
+            <div id="recClasses" class="modal-body">
+
+              <div class="table-responsive" >
+				<table class="table">
+				  <thead>
+					<tr class="table-heading">
+					  <th>COURSE</th>
+                      <th>LEVEL</th>
+					  <th>TITLE</th>
+					  <th>UNITS</th>
+					</tr>
+				  </thead>
+				  
+				  <tbody id="recClasses">
+					
+				  </tbody>
+				</table>
+			  </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      {% endif %}
 	</div>
 
 	    <div class="container " style="margin-top: 5px; ">
@@ -439,6 +478,21 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static '/js/jquery-3.1.1.js' %}"></script>
 	<script>
+
+      $("#btnViewRec").click(function(e) {
+          e.preventDefault();
+          $.getJSON("http://localhost:8000/dpr_parser/", function(result) {
+              $.each(result, function(index, field) {
+                  $.each(field, function(index2, field2) {
+                      $("#recClasses").append("<tr><td>"+field2.course_recommended__course_subject+
+                                              "</td><td>"+field2.course_recommended__course_level+
+                                              "</td><td>"+field2.course_recommended__course_title+
+                                              "</td><td>"+field2.course_recommended__course_units+
+                                              "</td></tr>");
+                  });
+              });
+          });
+      });
 		
 		$('#btnFilterClasses').click(function(e) {
 			e.preventDefault();

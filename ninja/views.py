@@ -218,7 +218,7 @@ def upload(request):
         form = DPRUploadForm() # A empty, unbound form
 
     # Load documents for the list page
-    documents = DPRfile.objects.all()
+    documents = DPRfile.objects.filter(user=request.user)
 
     # Render list page with the documents and the form
     return render(request, "ninja/dashboard.html", {'documents': documents, 'form': form} )
@@ -231,10 +231,13 @@ def dpr_parser(request):
     if request.user.is_authenticated:
         dpr_parser.main(request)
         messages.add_message(request, messages.INFO, 'DPR Parsed')
-        recommended_courses = CoursesRecommended.objects.filter(user=request.user)
+        recommended_courses = CoursesRecommended.objects.filter(user=request.user).values('course_recommended__course_subject',
+                                                                                          'course_recommended__course_level',
+                                                                                          'course_recommended__course_title',
+                                                                                          'course_recommended__course_units')
         context = {"recommended_courses" : recommended_courses}
 
-    return render(request, "ninja/recommended.html", context)
+    return JsonResponse({'result' : list(recommended_courses)})
 
 @csrf_exempt
 def returnRecomended(request):
